@@ -40,4 +40,5 @@ jobs:
           APP_ENV: sqlite
           DB_CONNECTION: sqlite
           DB_DATABASE: ':memory:'
+          CACHE_DRIVER: file
         run: vendor/bin/pest
