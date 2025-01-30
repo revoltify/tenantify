@@ -22,12 +22,12 @@ beforeEach(function () {
 });
 
 it('will inject the current tenant id in a job', function () {
-    tenantify()->initialize($this->tenant);
+    $this->tenant->makeCurrent();
 
     $job = new TestJob($this->valuestore);
     app(Dispatcher::class)->dispatch($job);
 
-    tenantify()->end();
+    $this->tenant->forget();
 
     $this->artisan('queue:work --once')->assertExitCode(0);
 
@@ -39,7 +39,7 @@ it('will inject the current tenant id in a job', function () {
 it('will inject the right tenant even when the current tenant switches', function () {
     $anotherTenant = Tenant::create(['name' => 'Test 2']);
 
-    tenantify()->initialize($this->tenant);
+    $this->tenant->makeCurrent();
 
     $job = new TestJob($this->valuestore);
     app(Dispatcher::class)->dispatch($job);
@@ -50,7 +50,7 @@ it('will inject the right tenant even when the current tenant switches', functio
 
     expect($this->tenant->id)->toEqual($currentTenantIdInJob);
 
-    tenantify()->initialize($anotherTenant);
+    $anotherTenant->makeCurrent();
 
     $job = new TestJob($this->valuestore);
     app(Dispatcher::class)->dispatch($job);
@@ -65,7 +65,7 @@ it('will inject the right tenant even when the current tenant switches', functio
 it('will not make jobs tenant aware if the config settings is set to false', function () {
     config()->set('tenantify.queue.tenant_aware_by_default', false);
 
-    tenantify()->initialize($this->tenant);
+    $this->tenant->makeCurrent();
 
     $job = new TestJob($this->valuestore);
     app(Dispatcher::class)->dispatch($job);
@@ -79,7 +79,7 @@ it('will not make jobs tenant aware if the config settings is set to false', fun
 it('will always make jobs tenant aware if they implement the TenantAware interface', function () {
     config()->set('tenantify.queue.tenant_aware_by_default', false);
 
-    tenantify()->initialize($this->tenant);
+    $this->tenant->makeCurrent();
 
     $job = new TenantAwareTestJob($this->valuestore);
     app(Dispatcher::class)->dispatch($job);
@@ -93,7 +93,7 @@ it('will always make jobs tenant aware if they implement the TenantAware interfa
 it('will not make a job tenant aware if it implements NotTenantAware', function () {
     config()->set('tenantify.queue.tenant_aware_by_default', true);
 
-    tenantify()->initialize($this->tenant);
+    $this->tenant->makeCurrent();
 
     $job = new NotTenantAwareTestJob($this->valuestore);
     app(Dispatcher::class)->dispatch($job);

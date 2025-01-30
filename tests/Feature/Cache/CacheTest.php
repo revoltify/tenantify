@@ -10,25 +10,25 @@ test('cache is tenant aware while global cache is not', function () {
     $tenant2 = Tenant::create(['name' => 'Cache Corp 2']);
 
     // Test tenant-aware cache
-    tenantify()->initialize($tenant1);
+    $tenant1->makeCurrent();
     Cache::put('test-key', 'tenant1-value');
 
-    tenantify()->initialize($tenant2);
+    $tenant2->makeCurrent();
     Cache::put('test-key', 'tenant2-value');
 
     // Assert tenant isolation
-    tenantify()->initialize($tenant1);
+    $tenant1->makeCurrent();
     expect(Cache::get('test-key'))->toBe('tenant1-value');
 
-    tenantify()->initialize($tenant2);
+    $tenant2->makeCurrent();
     expect(Cache::get('test-key'))->toBe('tenant2-value');
 
     // Test global cache
     GlobalCache::put('global-key', 'global-value');
 
-    tenantify()->initialize($tenant1);
+    $tenant1->makeCurrent();
     expect(GlobalCache::get('global-key'))->toBe('global-value');
 
-    tenantify()->initialize($tenant2);
+    $tenant2->makeCurrent();
     expect(GlobalCache::get('global-key'))->toBe('global-value');
 });
