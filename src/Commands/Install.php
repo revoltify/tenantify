@@ -27,7 +27,7 @@ class Install extends Command implements Isolatable
         $this->installConfig();
         $this->installMigrations();
 
-        $this->components->success('✨️ Single database Multi Tenant solution for Laravel successfully installed.');
+        $this->components->success('✨️ Tenantify successfully installed.');
 
         if (! $this->option('no-interaction')) {
             $this->askForSupport();
