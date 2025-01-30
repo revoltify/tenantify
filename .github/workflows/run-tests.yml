@@ -32,6 +32,11 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite
           coverage: none
 
+      - name: Start Redis
+        uses: supercharge/redis-github-action@1.1.0
+        with:
+          redis-version: 5
+          
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
