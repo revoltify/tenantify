@@ -6,6 +6,7 @@ namespace Revoltify\Tenantify;
 
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Revoltify\Tenantify\Commands\Install;
 use Revoltify\Tenantify\Managers\BootstrapperManager;
@@ -200,7 +201,7 @@ class TenantifyServiceProvider extends ServiceProvider
             $tenant = $resolver->resolve();
             $tenantify->initialize($tenant);
         } catch (\Exception $e) {
-            throw $e;
+            Log::error('Tenant initialization failed: '.$e->getMessage());
         }
     }
 }
