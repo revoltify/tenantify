@@ -1,0 +1,19 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+    
+parameters:
+    treatPhpDocTypesAsCertain: false
+    
+    # Paths to analyze
+    paths:
+        - src
+
+    excludePaths:
+        - src/Models/Concerns/BelongsToTenant.php
+        - src/Bootstrappers/SpatiePermissionsBootstrapper.php
+
+    # Level of analysis (0 = basic, 9 = strict)
+    level: 5
+
+    scanFiles:
+        - src/Models/Concerns/BelongsToTenant.php

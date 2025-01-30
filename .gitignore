@@ -1,0 +1,13 @@
+.env
+.DS_Store
+composer.lock
+vendor/
+.vscode/
+.idea
+psysh
+.phpunit.cache
+.phpunit.result.cache
+phpunit_var_*.xml
+coverage/
+clover.xml
+.php-cs-fixer.cache
