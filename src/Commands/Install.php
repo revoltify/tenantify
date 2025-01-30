@@ -55,9 +55,9 @@ class Install extends Command implements Isolatable
     protected function installMigrations(): void
     {
         $migrationFiles = [
-            'database/migrations/2025_01_25_060424_create_tenants_table.php',
-            'database/migrations/2025_01_25_060758_create_domains_table.php',
-            'database/migrations/2025_01_27_035047_add_tenant_id_to_sessions_table.php',
+            'database/migrations/0000_01_01_000000_create_tenants_table.php',
+            'database/migrations/0000_01_01_000001_create_domains_table.php',
+            'database/migrations/0001_01_01_000001_add_tenant_id_to_sessions_table.php',
         ];
 
         $this->publishStep(
