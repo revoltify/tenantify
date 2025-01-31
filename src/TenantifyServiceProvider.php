@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Revoltify\Tenantify;
 
 use Illuminate\Cache\CacheManager;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Revoltify\Tenantify\Commands\Install;
+use Revoltify\Tenantify\Managers\QueueManager;
+use Illuminate\Contracts\Foundation\Application;
+use Revoltify\Tenantify\Managers\FallbackManager;
 use Revoltify\Tenantify\Managers\BootstrapperManager;
 use Revoltify\Tenantify\Managers\DatabaseSessionManager;
-use Revoltify\Tenantify\Managers\QueueManager;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
 
@@ -177,7 +178,7 @@ class TenantifyServiceProvider extends ServiceProvider
      */
     private function shouldInitializeEarlyTenant(): bool
     {
-        return config('tenantify.early', true)
+        return config('tenantify.initialization.early', false)
         && ! $this->isRunningInConsole();
     }
 
@@ -202,6 +203,10 @@ class TenantifyServiceProvider extends ServiceProvider
             $tenantify->initialize($tenant);
         } catch (\Exception $e) {
             Log::error('Tenant initialization failed: '.$e->getMessage());
+
+            $domain = request()->getHost();
+            $fallbackManager = $this->app->make(FallbackManager::class);
+            $fallbackManager->handle($domain);
         }
     }
 }
