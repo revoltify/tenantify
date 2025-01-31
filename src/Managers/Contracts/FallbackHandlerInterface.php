@@ -1,6 +1,6 @@
 <?php
 
-namespace Revoltify\Tenantify\Contracts;
+namespace Revoltify\Tenantify\Managers\Contracts;
 
 interface FallbackHandlerInterface
 {
