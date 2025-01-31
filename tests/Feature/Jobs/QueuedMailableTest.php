@@ -27,7 +27,7 @@ it('will not fail when no tenant is present and mailables are tenant aware by de
 });
 
 it('will inject the current tenant id', function () {
-    $this->tenant->makeCurrent();
+    $this->tenant->initialize();
 
     expect(
         Mail::to('test@revoltify.net')->queue(new MailableTenantAware)

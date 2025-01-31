@@ -10,15 +10,13 @@ interface TenantInterface
 
     public function getTenantKeyName(): string;
 
+    public function initialize(): static;
+
+    public function terminate(): static;
+
     public static function current(): ?static;
 
-    public static function checkCurrent(): bool;
-
-    public static function forgetCurrent(): ?static;
-
-    public function makeCurrent(): static;
-
-    public function forget(): static;
+    public static function hasCurrent(): bool;
 
     public function isCurrent(): bool;
 }

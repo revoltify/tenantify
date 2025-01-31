@@ -35,7 +35,7 @@ it('will not fail when no tenant is present and mailables are tenant aware by de
 it('will inject the current tenant id', function () {
     config()->set('tenantify.queue.tenant_aware_by_default', true);
 
-    $this->tenant->makeCurrent();
+    $this->tenant->initialize();
 
     $this->tenant->notify((new NotificationTenantAware)->delay(now()->addSecond()));
 

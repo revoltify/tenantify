@@ -17,12 +17,12 @@ it('can create a tenant', function () {
 test('tenant can be manually initialized', function () {
     // Test with Tenant model
     $tenant = Tenant::create(['name' => 'Manual Corp']);
-    $tenant->makeCurrent();
+    $tenant->initialize();
 
     expect(tenantify()->isInitialized())->toBeTrue()
         ->and(tenant('id'))->toBe($tenant->id);
 
-    $tenant->forget();
+    $tenant->terminate();
 
     // Test with tenant_id
     tenantify()->initialize($tenant->id);
@@ -34,7 +34,7 @@ test('tenant can be manually initialized', function () {
 test('can create and manage users for multiple tenants', function () {
     // Create first tenant and its user
     $tenant1 = Tenant::create(['name' => 'First Corp']);
-    $tenant1->makeCurrent();
+    $tenant1->initialize();
 
     $user1 = UserTest::create([
         'name' => 'User One',
@@ -44,7 +44,7 @@ test('can create and manage users for multiple tenants', function () {
 
     // Create second tenant and its user
     $tenant2 = Tenant::create(['name' => 'Second Corp']);
-    $tenant2->makeCurrent();
+    $tenant2->initialize();
 
     $user2 = UserTest::create([
         'name' => 'User Two',
@@ -57,11 +57,11 @@ test('can create and manage users for multiple tenants', function () {
         ->and($user2->tenant_id)->toBe($tenant2->id);
 
     // Assert querying users respects current tenant
-    $tenant1->makeCurrent();
+    $tenant1->initialize();
     expect(UserTest::count())->toBe(1)
         ->and(UserTest::first()->email)->toBe('user1@first.com');
 
-    $tenant2->makeCurrent();
+    $tenant2->initialize();
     expect(UserTest::count())->toBe(1)
         ->and(UserTest::first()->email)->toBe('user2@second.com');
 });

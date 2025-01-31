@@ -31,7 +31,7 @@ it('will not fail when no tenant is present and listeners are tenant aware by de
 });
 
 it('will inject the current tenant id', function () {
-    $this->tenant->makeCurrent();
+    $this->tenant->initialize();
 
     Event::listen(TestEvent::class, ListenerNotTenantAware::class);
 

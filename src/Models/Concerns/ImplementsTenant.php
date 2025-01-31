@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Models\Concerns;
 
-use Revoltify\Tenantify\Models\Contracts\TenantInterface;
-
 trait ImplementsTenant
 {
     public function getTenantKeyName(): string
@@ -18,30 +16,26 @@ trait ImplementsTenant
         return $this->getAttribute($this->getTenantKeyName());
     }
 
-    public function makeCurrent(): static
+    public function initialize(): static
     {
         tenantify()->initialize($this);
 
         return $this;
     }
 
-    public function forget(): static
+    public function terminate(): static
     {
-        tenantify()->end();
+        tenantify()->terminate();
 
         return $this;
     }
 
     public static function current(): ?static
     {
-        if (! app()->has(TenantInterface::class)) {
-            return null;
-        }
-
-        return app(TenantInterface::class);
+        return tenant();
     }
 
-    public static function checkCurrent(): bool
+    public static function hasCurrent(): bool
     {
         return static::current() !== null;
     }
@@ -49,10 +43,5 @@ trait ImplementsTenant
     public function isCurrent(): bool
     {
         return static::current()?->getTenantKey() === $this->getTenantKey();
-    }
-
-    public static function forgetCurrent(): ?static
-    {
-        return tap(static::current(), fn (?TenantInterface $tenant) => $tenant?->forget());
     }
 }

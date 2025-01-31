@@ -78,12 +78,12 @@ test(
 );
 
 it('will forget any current tenant when starting a not tenant aware job', function () {
-    $this->tenant->makeCurrent();
+    $this->tenant->initialize();
 
     $job = new NotTenantAwareTestJob($this->valuestore);
 
     // Simulate a tenant being set from a previous queue job
-    expect(Tenant::checkCurrent())->toBeTrue();
+    expect(Tenant::hasCurrent())->toBeTrue();
 
     app(Dispatcher::class)->dispatch($job);
 

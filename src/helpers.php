@@ -13,17 +13,15 @@ if (! function_exists('tenant')) {
      */
     function tenant(?string $key = null): mixed
     {
-        $tenant = app()->bound(TenantInterface::class) ? app(TenantInterface::class) : null;
-
-        if (is_null($tenant)) {
+        if (! app()->bound(TenantInterface::class)) {
             return null;
         }
 
         if (is_null($key)) {
-            return $tenant;
+            return app(TenantInterface::class);
         }
 
-        return $tenant->getAttribute($key);
+        return app(TenantInterface::class)?->getAttribute($key);
     }
 }
 
