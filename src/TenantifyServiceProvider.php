@@ -42,6 +42,7 @@ class TenantifyServiceProvider extends ServiceProvider
     {
         $this->registerResolver();
         $this->registerBootstrappers();
+        $this->registerFallbackManager();
         $this->registerCoreBindings();
         $this->registerSessionHandler();
     }
@@ -77,6 +78,14 @@ class TenantifyServiceProvider extends ServiceProvider
 
             return $manager;
         });
+    }
+
+    /**
+     * Register the fallback manager as a singleton
+     */
+    private function registerFallbackManager(): void
+    {
+        $this->app->singleton(FallbackManager::class);
     }
 
     /**
@@ -193,7 +202,7 @@ class TenantifyServiceProvider extends ServiceProvider
     /**
      * Initialize tenant for the current request.
      */
-    private function initializeTenantify(): void
+    private function initializeTenantify()
     {
         try {
             $resolver = $this->app->make(ResolverInterface::class);
@@ -206,7 +215,7 @@ class TenantifyServiceProvider extends ServiceProvider
 
             $domain = request()->getHost();
             $fallbackManager = $this->app->make(FallbackManager::class);
-            $fallbackManager->handle($domain);
+            return $fallbackManager->handle($domain);
         }
     }
 }
