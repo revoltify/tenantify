@@ -3,6 +3,16 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Tenant & Domain Models
+    |--------------------------------------------------------------------------
+    */
+    'models' => [
+        'tenant' => \Revoltify\Tenantify\Models\Tenant::class,
+        'domain' => \Revoltify\Tenantify\Models\Domain::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Tenant Initialization Configuration
     |--------------------------------------------------------------------------
     |
@@ -33,16 +43,6 @@ return [
             // Route name or URL for redirect fallback
             'redirect_to' => '/',
         ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Tenant & Domain Models
-    |--------------------------------------------------------------------------
-    */
-    'models' => [
-        'tenant' => \Revoltify\Tenantify\Models\Tenant::class,
-        'domain' => \Revoltify\Tenantify\Models\Domain::class,
     ],
 
     /*
