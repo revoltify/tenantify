@@ -19,6 +19,7 @@ trait InitializesTenant
      * Initialize the tenant for the current request.
      *
      * @param  ResolverInterface|null  $resolver  Custom tenant resolver
+     * 
      * @return void
      *
      * @throws TenantInitializationException When tenant initialization critically fails
@@ -40,6 +41,8 @@ trait InitializesTenant
     /**
      * Handle tenant initialization failure with proper logging and fallback mechanisms.
      *
+     * @return void
+     * 
      * @param  Exception  $e  The exception that occurred during initialization
      */
     protected function handleTenantInitializationFailure(Exception $e): void

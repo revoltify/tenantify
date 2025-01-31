@@ -57,7 +57,7 @@ class Install extends Command implements Isolatable
         $migrationFiles = [
             'database/migrations/0000_01_01_000000_create_tenants_table.php',
             'database/migrations/0000_01_01_000001_create_domains_table.php',
-            'database/migrations/0001_01_01_000001_add_tenant_id_to_sessions_table.php',
+            'database/migrations/9999_01_01_000000_add_tenant_id_to_sessions_table.php',
         ];
 
         $this->publishStep(
