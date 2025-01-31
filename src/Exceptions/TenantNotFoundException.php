@@ -10,4 +10,9 @@ class TenantNotFoundException extends TenantifyException
     {
         return new self("The tenant with ID [{$tenantId}] could not be identified.");
     }
+
+    public static function forDomain(string $domain)
+    {
+        return new self("The tenant with Domain [{$domain}] could not be identified.");
+    }
 }
