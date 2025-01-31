@@ -6,21 +6,21 @@ namespace Revoltify\Tenantify\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
+use Revoltify\Tenantify\Concerns\InitializesTenant;
 use Revoltify\Tenantify\Tenantify;
 
 class InitializeTenantify
 {
+    use InitializesTenant;
+
     public function __construct(
-        protected Tenantify $tenantify,
-        protected ResolverInterface $resolver
+        protected Tenantify $tenantify
     ) {}
 
     public function handle(Request $request, Closure $next)
     {
         if (! $this->tenantify->isInitialized()) {
-            $tenant = $this->resolver->resolve();
-            $this->tenantify->initialize($tenant);
+            $this->initializeTenantify();
         }
 
         return $next($request);

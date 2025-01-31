@@ -6,9 +6,9 @@ namespace Revoltify\Tenantify;
 
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
 use Revoltify\Tenantify\Commands\Install;
+use Revoltify\Tenantify\Concerns\InitializesTenant;
 use Revoltify\Tenantify\Managers\BootstrapperManager;
 use Revoltify\Tenantify\Managers\DatabaseSessionManager;
 use Revoltify\Tenantify\Managers\FallbackManager;
@@ -18,6 +18,8 @@ use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
 
 class TenantifyServiceProvider extends ServiceProvider
 {
+    use InitializesTenant;
+
     /**
      * Register the service provider.
      */
@@ -131,21 +133,12 @@ class TenantifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->bootTenantify();
-
-    }
-
-    /**
-     * Initialize Tenantify and publish resources.
-     */
-    private function bootTenantify(): void
-    {
         $this->bootQueueManager();
 
-        $this->publishResources();
-
-        if ($this->shouldInitializeEarlyTenant()) {
-            $this->initializeTenantify();
+        if ($this->app->runningInConsole()) {
+            $this->bootConsole();
+        } else {
+            $this->bootTenantify();
         }
     }
 
@@ -154,27 +147,36 @@ class TenantifyServiceProvider extends ServiceProvider
      */
     private function bootQueueManager()
     {
-        $this->app->make(QueueManager::class)->initialize();
+        $this->callAfterResolving('queue', function () {
+            $this->app->make(QueueManager::class)->initialize();
+        });
     }
 
     /**
-     * Publish package resources
+     * Boot Console
      */
-    private function publishResources(): void
+    private function bootConsole(): void
     {
-        if ($this->isRunningInConsole()) {
+        $this->commands([
+            Install::class,
+        ]);
 
-            $this->commands([
-                Install::class,
-            ]);
+        $this->publishes([
+            __DIR__.'/../config/tenantify.php' => config_path('tenantify.php'),
+        ], 'config');
 
-            $this->publishes([
-                __DIR__.'/../config/tenantify.php' => config_path('tenantify.php'),
-            ], 'config');
+        $this->publishes([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ], 'migrations');
+    }
 
-            $this->publishes([
-                __DIR__.'/../database/migrations' => database_path('migrations'),
-            ], 'migrations');
+    /**
+     * Initialize Tenantify and publish resources.
+     */
+    private function bootTenantify(): void
+    {
+        if ($this->shouldInitializeEarlyTenant()) {
+            $this->initializeTenantify();
         }
     }
 
@@ -187,35 +189,6 @@ class TenantifyServiceProvider extends ServiceProvider
      */
     private function shouldInitializeEarlyTenant(): bool
     {
-        return config('tenantify.initialization.early', false)
-        && ! $this->isRunningInConsole();
-    }
-
-    /**
-     * Check if the application is running in the console.
-     */
-    private function isRunningInConsole(): bool
-    {
-        return $this->app->runningInConsole();
-    }
-
-    /**
-     * Initialize tenant for the current request.
-     */
-    private function initializeTenantify()
-    {
-        try {
-            $resolver = $this->app->make(ResolverInterface::class);
-            $tenantify = $this->app->make(Tenantify::class);
-
-            $tenant = $resolver->resolve();
-            $tenantify->initialize($tenant);
-        } catch (\Exception $e) {
-            Log::error('Tenant initialization failed: '.$e->getMessage());
-
-            $domain = request()->getHost();
-            $fallbackManager = $this->app->make(FallbackManager::class);
-            return $fallbackManager->handle($domain);
-        }
+        return config('tenantify.initialization.early', false) === true;
     }
 }
