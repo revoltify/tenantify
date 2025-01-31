@@ -17,7 +17,7 @@ beforeEach(function () {
 it('succeeds with jobs in tenant aware jobs list', function () {
     config()->set('tenantify.queue.tenant_aware_jobs', [TestJob::class]);
 
-    $this->tenant->makeCurrent();
+    $this->tenant->initialize();
 
     app(Dispatcher::class)->dispatch(new TestJob($this->valuestore));
 
@@ -28,7 +28,7 @@ it('succeeds with jobs in tenant aware jobs list', function () {
 it('fails with jobs in not tenant aware jobs list', function () {
     config()->set('tenantify.queue.not_tenant_aware_jobs', [TestJob::class]);
 
-    $this->tenant->makeCurrent();
+    $this->tenant->initialize();
 
     app(Dispatcher::class)->dispatch(new TestJob($this->valuestore));
 

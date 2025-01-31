@@ -15,7 +15,7 @@ beforeEach(function () {
 });
 
 it('will check if updating the current tenant, the next job uses fresh data', function () {
-    $this->tenant->makeCurrent();
+    $this->tenant->initialize();
 
     $tenantOriginalName = $this->tenant->name;
 

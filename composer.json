@@ -49,8 +49,6 @@
     },
     "scripts": {
         "test": "vendor/bin/pest",
-        "test-coverage": "vendor/bin/pest --coverage --coverage-html",
-        "phpstan": "vendor/bin/phpstan analyse src",
         "lint": [
             "@php vendor/bin/pint --ansi",
             "@php vendor/bin/phpstan analyse --verbose --ansi"

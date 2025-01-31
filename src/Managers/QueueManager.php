@@ -90,7 +90,7 @@ class QueueManager
             return;
         }
 
-        tenantify()->end();
+        tenantify()->terminate();
     }
 
     /**

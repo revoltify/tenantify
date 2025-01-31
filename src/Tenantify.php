@@ -35,7 +35,7 @@ class Tenantify
         }
 
         if ($this->initialized) {
-            $this->end();
+            $this->terminate();
         }
 
         $this->tenant = $tenant;
@@ -47,7 +47,7 @@ class Tenantify
         $this->bootstrapper->bootstrap($tenant);
     }
 
-    public function end(): void
+    public function terminate(): void
     {
         if ($this->isInitialized()) {
 
