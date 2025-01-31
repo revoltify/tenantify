@@ -19,6 +19,7 @@ trait InitializesTenant
      * Initialize the tenant for the current request.
      *
      * @param  ResolverInterface|null  $resolver  Custom tenant resolver
+     * @return void
      *
      * @throws TenantInitializationException When tenant initialization critically fails
      */
@@ -40,44 +41,22 @@ trait InitializesTenant
      * Handle tenant initialization failure with proper logging and fallback mechanisms.
      *
      * @param  Exception  $e  The exception that occurred during initialization
-     *
-     * @throws TenantInitializationException When fallback handling fails
      */
     protected function handleTenantInitializationFailure(Exception $e): void
     {
-        $request = request();
-        $domain = $request->getHost();
+        $domain = request()->getHost();
 
         Log::error('Tenant initialization failed: '.$e->getMessage(), [
             'message' => $e->getMessage(),
-            'exception' => get_class($e),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
             'domain' => $domain,
-            'url' => $request->fullUrl(),
-            'method' => $request->method(),
-            'request_data' => $request->except(['password', 'password_confirmation']),
         ]);
 
-        try {
-            $fallbackManager = app()->make(FallbackManager::class);
-            $response = $fallbackManager->handle($domain);
+        $fallbackManager = app()->make(FallbackManager::class);
+        $response = $fallbackManager->handle($domain);
 
-            if ($response instanceof Response || $response instanceof RedirectResponse) {
-                $response->send();
-                exit;
-            }
-        } catch (Exception $e) {
-            Log::critical('Fallback handling failed', [
-                'message' => $e->getMessage(),
-                'domain' => $domain,
-            ]);
-
-            throw new TenantInitializationException(
-                'Both tenant initialization and fallback handling failed',
-                previous: $e
-            );
+        if ($response instanceof Response || $response instanceof RedirectResponse) {
+            $response->send();
+            exit;
         }
-
     }
 }
