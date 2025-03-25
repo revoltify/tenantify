@@ -4,8 +4,7 @@
 
 | Version | New Features       | Bug Fixes          | Security Fixes     |
 |---------|--------------------|--------------------|--------------------|
-| 1.x     | :x:                | :white_check_mark: | :white_check_mark: |
-| 2.x     | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| 1.x     | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
