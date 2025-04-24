@@ -9,4 +9,8 @@ use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 interface ResolverInterface
 {
     public function resolve(): ?TenantInterface;
+
+    public function clearCurrentCache(): void;
+
+    public function clearAllCache(): void;
 }
