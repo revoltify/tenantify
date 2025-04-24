@@ -50,3 +50,28 @@ if (! function_exists('tenant_id')) {
         return $tenant->getTenantKey();
     }
 }
+
+if (! function_exists('clear_tenantify_cache')) {
+    /**
+     * Clear tenantify cache for the current tenant or all cache.
+     *
+     * @param  bool  $clearAll  Whether to clear all tenant cache instead of just current tenant
+     * @return bool Whether cache was successfully cleared
+     */
+    function clear_tenantify_cache(bool $clearAll = false): bool
+    {
+        try {
+            $resolver = tenantify()->getResolver();
+
+            if ($clearAll) {
+                $resolver->clearAllCache();
+            } else {
+                $resolver->clearCurrentCache();
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+}
