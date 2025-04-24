@@ -49,6 +49,12 @@ abstract class AbstractResolver implements ResolverInterface
         }
     }
 
+    public function clearCurrentCache(): void
+    {
+        $identifier = $this->getIdentifierFromRequest();
+        $this->clearCache($identifier);
+    }
+
     public function clearAllCache(): void
     {
         if ($this->useCache) {
