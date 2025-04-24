@@ -12,6 +12,7 @@ use Revoltify\Tenantify\Exceptions\TenantNotFoundException;
 use Revoltify\Tenantify\Managers\BootstrapperManager;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Models\Tenant;
+use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
 
 class Tenantify
 {
@@ -76,5 +77,10 @@ class Tenantify
         $tenantModel = config('tenantify.models.tenant', Tenant::class);
 
         return $tenantModel::whereId($id)->first();
+    }
+
+    public function getResolver(): ResolverInterface
+    {
+        return app(ResolverInterface::class);
     }
 }
