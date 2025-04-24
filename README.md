@@ -5,7 +5,7 @@
 [![Tests](https://github.com/revoltify/tenantify/actions/workflows/run-tests.yml/badge.svg)](https://github.com/revoltify/tenantify/actions/workflows/run-tests.yml)
 [![License](https://img.shields.io/github/license/revoltify/tenantify)](https://github.com/revoltify/tenantify/blob/main/LICENSE.md)
 
-A powerful and flexible single-database multi-tenant solution for Laravel 11, built with SOLID principles in mind.
+A powerful and flexible single-database multi-tenant solution for Laravel 11+, built with SOLID principles in mind.
 
 ## Features
 
@@ -24,7 +24,7 @@ A powerful and flexible single-database multi-tenant solution for Laravel 11, bu
 ## Requirements
 
 - PHP 8.2 or higher
-- Laravel 11.x
+- Laravel 11.x or higher
 
 ## Installation
 
