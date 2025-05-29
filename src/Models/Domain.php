@@ -6,10 +6,13 @@ namespace Revoltify\Tenantify\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Revoltify\Tenantify\Models\Concerns\ImplementsDomain;
 use Revoltify\Tenantify\Models\Contracts\DomainInterface;
 
 class Domain extends Model implements DomainInterface
 {
+    use ImplementsDomain;
+
     protected $guarded = [];
 
     public function tenant(): BelongsTo
