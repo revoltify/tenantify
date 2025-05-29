@@ -18,6 +18,8 @@ abstract class AbstractResolver implements ResolverInterface
 
     protected string $cachePrefix;
 
+    public static $currentDomain;
+
     public function __construct(
         protected Request $request,
         protected Cache $cache
@@ -79,10 +81,14 @@ abstract class AbstractResolver implements ResolverInterface
     {
         $identifier = $this->getIdentifierFromRequest();
 
+        $tenant = $this->findTenant($identifier);
+
+        $this->setCurrentDomain($tenant);
+
         try {
             return $this->remember(
                 $identifier,
-                fn () => $this->findTenant($identifier)
+                fn () => $tenant
             );
         } catch (\Exception $e) {
             $this->clearCache($identifier);
@@ -90,12 +96,18 @@ abstract class AbstractResolver implements ResolverInterface
         }
     }
 
-    abstract protected function findTenant(string $identifier): ?TenantInterface;
-
-    abstract protected function getIdentifierFromRequest(): string;
+    private function setCurrentDomain(TenantInterface $tenant): void
+    {
+        /** @phpstan-ignore-next-line */
+        static::$currentDomain = $tenant->domains->where('domain', $this->request->getHost())->first();
+    }
 
     protected function getTenantModel(): string
     {
         return config('tenantify.models.tenant', Tenant::class);
     }
+
+    abstract protected function findTenant(string $identifier): ?TenantInterface;
+
+    abstract protected function getIdentifierFromRequest(): string;
 }

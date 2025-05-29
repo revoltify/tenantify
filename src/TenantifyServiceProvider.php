@@ -13,8 +13,10 @@ use Revoltify\Tenantify\Managers\BootstrapperManager;
 use Revoltify\Tenantify\Managers\DatabaseSessionManager;
 use Revoltify\Tenantify\Managers\FallbackManager;
 use Revoltify\Tenantify\Managers\QueueManager;
+use Revoltify\Tenantify\Models\Contracts\DomainInterface;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
+use Revoltify\Tenantify\Resolvers\DomainResolver;
 
 class TenantifyServiceProvider extends ServiceProvider
 {
@@ -109,6 +111,10 @@ class TenantifyServiceProvider extends ServiceProvider
         // Bind TenantInterface to the current tenant
         $this->app->bind(TenantInterface::class, function (Application $app) {
             return $app->make(Tenantify::class)->tenant();
+        });
+
+        $this->app->bind(DomainInterface::class, function () {
+            return DomainResolver::$currentDomain;
         });
     }
 
