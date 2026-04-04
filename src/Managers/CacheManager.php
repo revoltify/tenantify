@@ -6,7 +6,7 @@ namespace Revoltify\Tenantify\Managers;
 
 use Illuminate\Cache\CacheManager as BaseCacheManager;
 
-class CacheManager extends BaseCacheManager
+final class CacheManager extends BaseCacheManager
 {
     protected function getPrefix(array $config)
     {

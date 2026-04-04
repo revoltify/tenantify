@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 interface TenantInterface
 {
+    public static function current(): ?static;
+
+    public static function hasCurrent(): bool;
+
     public function domains(): HasMany;
 
     public function getTenantKey(): int|string;
@@ -17,10 +21,6 @@ interface TenantInterface
     public function initialize(): static;
 
     public function terminate(): static;
-
-    public static function current(): ?static;
-
-    public static function hasCurrent(): bool;
 
     public function isCurrent(): bool;
 }

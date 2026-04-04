@@ -14,14 +14,14 @@ use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Models\Tenant;
 use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
 
-class Tenantify
+final class Tenantify
 {
-    protected ?TenantInterface $tenant = null;
+    private ?TenantInterface $tenant = null;
 
-    protected bool $initialized = false;
+    private bool $initialized = false;
 
     public function __construct(
-        protected BootstrapperManager $bootstrapper
+        private BootstrapperManager $bootstrapper
     ) {}
 
     public function initialize(TenantInterface|int|string $tenant): void

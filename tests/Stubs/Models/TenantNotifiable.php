@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Revoltify\Tenantify\Tests\Stubs\Models;
 
 use Illuminate\Notifications\Notifiable;
 use Revoltify\Tenantify\Models\Tenant;
 
-class TenantNotifiable extends Tenant
+final class TenantNotifiable extends Tenant
 {
     use Notifiable;
 

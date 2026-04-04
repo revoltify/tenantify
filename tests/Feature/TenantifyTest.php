@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Revoltify\Tenantify\Models\Tenant;
 use Revoltify\Tenantify\Tests\Stubs\Models\UserTest;
 

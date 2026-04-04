@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Revoltify\Tenantify\Managers;
 
 use Illuminate\Support\Facades\View;
 use Revoltify\Tenantify\Exceptions\TenantNotFoundException;
 use Revoltify\Tenantify\Managers\Contracts\FallbackHandlerInterface;
 
-class FallbackManager implements FallbackHandlerInterface
+final class FallbackManager implements FallbackHandlerInterface
 {
     public function handle(string $domain)
     {
@@ -22,12 +24,12 @@ class FallbackManager implements FallbackHandlerInterface
         };
     }
 
-    protected function handleThrow(string $domain)
+    private function handleThrow(string $domain)
     {
         throw TenantNotFoundException::forDomain($domain);
     }
 
-    protected function handleView(string $domain)
+    private function handleView(string $domain)
     {
         $view = config('tenantify.initialization.fallback.view', 'errors.tenant-not-found');
 
@@ -40,21 +42,21 @@ class FallbackManager implements FallbackHandlerInterface
         ]);
     }
 
-    protected function handleRedirect(string $domain)
+    private function handleRedirect(string $domain)
     {
         $redirectTo = config('tenantify.initialization.fallback.redirect_to', '/');
 
         return redirect($redirectTo);
     }
 
-    protected function handleAbort(string $domain)
+    private function handleAbort(string $domain)
     {
         $statusCode = config('tenantify.initialization.fallback.status_code', 404);
 
         abort($statusCode);
     }
 
-    protected function handleCustom(string $domain)
+    private function handleCustom(string $domain)
     {
         $handlerClass = config('tenantify.initialization.fallback.handler');
 

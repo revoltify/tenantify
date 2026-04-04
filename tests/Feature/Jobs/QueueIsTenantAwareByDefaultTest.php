@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Support\Facades\Event;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Revoltify\Tenantify\Tests\Stubs\Notifications;
 
 use Illuminate\Bus\Queueable;
@@ -8,7 +10,7 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Revoltify\Tenantify\Jobs\TenantAware;
 
-class NotificationTenantAware extends Notification implements ShouldQueue, TenantAware
+final class NotificationTenantAware extends Notification implements ShouldQueue, TenantAware
 {
     use Queueable;
 

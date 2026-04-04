@@ -6,7 +6,7 @@ namespace Revoltify\Tenantify\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Tenantify extends Facade
+final class Tenantify extends Facade
 {
     protected static function getFacadeAccessor()
     {

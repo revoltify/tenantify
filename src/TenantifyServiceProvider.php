@@ -18,7 +18,7 @@ use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
 use Revoltify\Tenantify\Resolvers\DomainResolver;
 
-class TenantifyServiceProvider extends ServiceProvider
+final class TenantifyServiceProvider extends ServiceProvider
 {
     use InitializesTenant;
 
@@ -29,6 +29,20 @@ class TenantifyServiceProvider extends ServiceProvider
     {
         $this->mergeConfig();
         $this->registerBindings();
+    }
+
+    /**
+     * Boot the service provider.
+     */
+    public function boot(): void
+    {
+        $this->bootQueueManager();
+
+        if ($this->app->runningInConsole()) {
+            $this->bootConsole();
+        } else {
+            $this->bootTenantify();
+        }
     }
 
     /**
@@ -52,17 +66,6 @@ class TenantifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the tenant resolver.
-     */
-    private function registerResolver(): void
-    {
-        $this->app->singleton(
-            ResolverInterface::class,
-            config('tenantify.resolver.class')
-        );
-    }
-
-    /**
      * Register bootstrappers with the BootstrapperManager.
      */
     protected function registerBootstrappers(): void
@@ -82,6 +85,17 @@ class TenantifyServiceProvider extends ServiceProvider
 
             return $manager;
         });
+    }
+
+    /**
+     * Register the tenant resolver.
+     */
+    private function registerResolver(): void
+    {
+        $this->app->singleton(
+            ResolverInterface::class,
+            config('tenantify.resolver.class')
+        );
     }
 
     /**
@@ -132,20 +146,6 @@ class TenantifyServiceProvider extends ServiceProvider
                 $connection, $table, $minutes, $app
             );
         });
-    }
-
-    /**
-     * Boot the service provider.
-     */
-    public function boot(): void
-    {
-        $this->bootQueueManager();
-
-        if ($this->app->runningInConsole()) {
-            $this->bootConsole();
-        } else {
-            $this->bootTenantify();
-        }
     }
 
     /**

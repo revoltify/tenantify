@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Exceptions;
 
-class TenantResolutionException extends TenantifyException
+final class TenantResolutionException extends TenantifyException
 {
     public static function make()
     {

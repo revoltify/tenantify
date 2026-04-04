@@ -10,7 +10,7 @@ use Revoltify\Tenantify\Concerns\InitializesTenant;
 use Revoltify\Tenantify\Resolvers\DomainResolver;
 use Revoltify\Tenantify\Tenantify;
 
-class InitializeTenantifyByDomain
+final class InitializeTenantifyByDomain
 {
     use InitializesTenant;
 

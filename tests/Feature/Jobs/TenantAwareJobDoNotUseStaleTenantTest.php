@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Contracts\Bus\Dispatcher;
 use Revoltify\Tenantify\Models\Tenant;
 use Revoltify\Tenantify\Tests\Stubs\Jobs\TestJob;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Event;
 use Revoltify\Tenantify\Exceptions\TenantNotFoundInTenantAwareJobException;
 use Revoltify\Tenantify\Models\Tenant;

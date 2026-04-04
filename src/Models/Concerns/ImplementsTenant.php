@@ -6,6 +6,16 @@ namespace Revoltify\Tenantify\Models\Concerns;
 
 trait ImplementsTenant
 {
+    public static function current(): ?static
+    {
+        return tenant();
+    }
+
+    public static function hasCurrent(): bool
+    {
+        return static::current() !== null;
+    }
+
     public function getTenantKeyName(): string
     {
         return $this->getKeyName();
@@ -28,16 +38,6 @@ trait ImplementsTenant
         tenantify()->terminate();
 
         return $this;
-    }
-
-    public static function current(): ?static
-    {
-        return tenant();
-    }
-
-    public static function hasCurrent(): bool
-    {
-        return static::current() !== null;
     }
 
     public function isCurrent(): bool

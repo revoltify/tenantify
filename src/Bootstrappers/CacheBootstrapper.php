@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Revoltify\Tenantify\Managers\CacheManager;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
-class CacheBootstrapper extends AbstractBootstrapper
+final class CacheBootstrapper extends AbstractBootstrapper
 {
     protected int $priority = 20;
 

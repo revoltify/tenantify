@@ -65,7 +65,7 @@ use Illuminate\Support\Facades\Facade;
  * @see CacheManager
  * @see Repository
  */
-class GlobalCache extends Facade
+final class GlobalCache extends Facade
 {
     protected static function getFacadeAccessor()
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Revoltify\Tenantify\Exceptions;
 
-class TenantInitializationException extends TenantifyException {}
+final class TenantInitializationException extends TenantifyException {}

@@ -7,9 +7,9 @@ namespace Revoltify\Tenantify\Managers;
 use Revoltify\Tenantify\Bootstrappers\Contracts\BootstrapperInterface;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
-class BootstrapperManager
+final class BootstrapperManager
 {
-    protected array $bootstrappers = [];
+    private array $bootstrappers = [];
 
     public function addBootstrapper(BootstrapperInterface $bootstrapper): void
     {

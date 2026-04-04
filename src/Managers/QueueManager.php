@@ -8,19 +8,21 @@ use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobRetryRequested;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Testing\Fakes\QueueFake;
+use ReflectionClass;
 use Revoltify\Tenantify\Exceptions\TenantNotFoundException;
 use Revoltify\Tenantify\Exceptions\TenantNotFoundInTenantAwareJobException;
 use Revoltify\Tenantify\Jobs\NotTenantAware;
 use Revoltify\Tenantify\Jobs\TenantAware;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Models\Tenant;
+use Throwable;
 
-class QueueManager
+final class QueueManager
 {
     /**
      * @var \Illuminate\Queue\QueueManager
      */
-    protected $queue;
+    private $queue;
 
     /**
      * QueueManager constructor.
@@ -102,7 +104,7 @@ class QueueManager
 
         try {
             $command = $this->unserializeCommand($payload);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             // Handle deserialization with current tenant context
             if ($tenantId = $this->getTenantIdFromPayload($event)) {
                 tenantify()->initialize($tenantId);
@@ -168,7 +170,7 @@ class QueueManager
      */
     private function checkJobTenantAwareness($job): bool
     {
-        $reflection = new \ReflectionClass($job);
+        $reflection = new ReflectionClass($job);
         $jobClass = $reflection->getName();
 
         // Check interfaces

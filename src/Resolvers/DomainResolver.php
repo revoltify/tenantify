@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Revoltify\Tenantify\Exceptions\TenantResolutionException;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
-class DomainResolver extends AbstractResolver
+final class DomainResolver extends AbstractResolver
 {
-    protected function findTenant(string $domain): ?TenantInterface
+    protected function findTenant(string $domain): TenantInterface
     {
         if (! $this->isValidDomain($domain)) {
             throw TenantResolutionException::invalidDomainFormat($domain);
@@ -45,7 +45,7 @@ class DomainResolver extends AbstractResolver
     {
         $parts = explode('.', $domain);
         if (current($parts) === 'www') {
-            $domain = substr(implode('.', $parts), 4);
+            $domain = mb_substr(implode('.', $parts), 4);
         }
 
         return $domain;

@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Facades\Process;
 
-class Install extends Command implements Isolatable
+final class Install extends Command implements Isolatable
 {
     /**
      * The command signature and description.
@@ -98,6 +98,30 @@ class Install extends Command implements Isolatable
     }
 
     /**
+     * Ask for GitHub support and open browser if accepted.
+     */
+    protected function askForSupport(): void
+    {
+        if (! $this->components->confirm('Would you like to show your support by starring the project on GitHub?', true)) {
+            return;
+        }
+
+        $commands = [
+            'Darwin' => 'open',
+            'Windows' => 'start',
+            'Linux' => 'xdg-open',
+        ];
+
+        $command = $commands[PHP_OS_FAMILY] ?? null;
+
+        if ($command === null) {
+            return;
+        }
+
+        Process::run([$command, 'https://github.com/revoltify/tenantify']);
+    }
+
+    /**
      * Format the step name with file information.
      */
     private function formatStepName(string $name, ?string $file): string
@@ -167,29 +191,5 @@ class Install extends Command implements Isolatable
                 collect($files)->map(fn (string $file) => "[$file]")->toArray()
             );
         }
-    }
-
-    /**
-     * Ask for GitHub support and open browser if accepted.
-     */
-    protected function askForSupport(): void
-    {
-        if (! $this->components->confirm('Would you like to show your support by starring the project on GitHub?', true)) {
-            return;
-        }
-
-        $commands = [
-            'Darwin' => 'open',
-            'Windows' => 'start',
-            'Linux' => 'xdg-open',
-        ];
-
-        $command = $commands[PHP_OS_FAMILY] ?? null;
-
-        if ($command === null) {
-            return;
-        }
-
-        Process::run([$command, 'https://github.com/revoltify/tenantify']);
     }
 }

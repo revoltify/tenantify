@@ -10,7 +10,7 @@ abstract class AbstractBootstrapper implements BootstrapperInterface
 {
     protected int $priority = 0;
 
-    public function getPriority(): int
+    final public function getPriority(): int
     {
         return $this->priority;
     }

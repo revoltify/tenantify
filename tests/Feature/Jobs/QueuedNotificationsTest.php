@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\Notification;
 use Revoltify\Tenantify\Exceptions\TenantNotFoundInTenantAwareJobException;
 use Revoltify\Tenantify\Tests\Stubs\Models\TenantNotifiable;

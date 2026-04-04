@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Revoltify\Tenantify\Concerns\InitializesTenant;
 use Revoltify\Tenantify\Tenantify;
 
-class InitializeTenantify
+final class InitializeTenantify
 {
     use InitializesTenant;
 

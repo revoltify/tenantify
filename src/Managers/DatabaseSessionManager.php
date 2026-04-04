@@ -8,7 +8,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Session\DatabaseSessionHandler;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
-class DatabaseSessionManager extends DatabaseSessionHandler
+final class DatabaseSessionManager extends DatabaseSessionHandler
 {
     /**
      * Get a fresh query builder instance for the table with tenant scope.

@@ -16,7 +16,7 @@ abstract class AbstractTenantEvent implements TenantEventInterface
         protected TenantInterface $tenant
     ) {}
 
-    public function getTenant(): TenantInterface
+    final public function getTenant(): TenantInterface
     {
         return $this->tenant;
     }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 
-class TenantScope implements Scope
+final class TenantScope implements Scope
 {
     public static string $tenantIdColumn = 'tenant_id';
 
@@ -18,7 +18,7 @@ class TenantScope implements Scope
             return;
         }
 
-        $builder->where($model->qualifyColumn(static::$tenantIdColumn), tenant()->getTenantKey());
+        $builder->where($model->qualifyColumn(self::$tenantIdColumn), tenant()->getTenantKey());
     }
 
     public function extend(Builder $builder): void

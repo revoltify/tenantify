@@ -7,7 +7,7 @@ namespace Revoltify\Tenantify\Tests\Stubs\Models;
 use Illuminate\Database\Eloquent\Model;
 use Revoltify\Tenantify\Models\Concerns\BelongsToTenant;
 
-class UserTest extends Model
+final class UserTest extends Model
 {
     use BelongsToTenant;
 

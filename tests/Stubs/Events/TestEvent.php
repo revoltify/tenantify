@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Revoltify\Tenantify\Tests\Stubs\Events;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class TestEvent
+final class TestEvent
 {
     use Dispatchable;
     use InteractsWithSockets;

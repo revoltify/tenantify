@@ -6,7 +6,7 @@ namespace Revoltify\Tenantify\Bootstrappers;
 
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
-class SessionBootstrapper extends AbstractBootstrapper
+final class SessionBootstrapper extends AbstractBootstrapper
 {
     protected int $priority = 10;
 

@@ -7,7 +7,7 @@ namespace Revoltify\Tenantify\Bootstrappers;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Spatie\Permission\PermissionRegistrar;
 
-class SpatiePermissionsBootstrapper extends AbstractBootstrapper
+final class SpatiePermissionsBootstrapper extends AbstractBootstrapper
 {
     protected int $priority = 50;
 

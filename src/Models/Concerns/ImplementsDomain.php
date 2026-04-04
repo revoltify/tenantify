@@ -8,16 +8,6 @@ use Revoltify\Tenantify\Models\Contracts\DomainInterface;
 
 trait ImplementsDomain
 {
-    public function getDomainKeyName(): string
-    {
-        return $this->getKeyName();
-    }
-
-    public function getDomainKey(): int|string
-    {
-        return $this->getAttribute($this->getDomainKeyName());
-    }
-
     public static function current(): ?static
     {
         if (! app()->bound(DomainInterface::class)) {
@@ -31,6 +21,16 @@ trait ImplementsDomain
     public static function hasCurrent(): bool
     {
         return static::current() !== null;
+    }
+
+    public function getDomainKeyName(): string
+    {
+        return $this->getKeyName();
+    }
+
+    public function getDomainKey(): int|string
+    {
+        return $this->getAttribute($this->getDomainKeyName());
     }
 
     public function isCurrent(): bool

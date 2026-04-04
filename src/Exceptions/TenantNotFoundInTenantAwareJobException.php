@@ -4,4 +4,4 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Exceptions;
 
-class TenantNotFoundInTenantAwareJobException extends TenantifyException {}
+final class TenantNotFoundInTenantAwareJobException extends TenantifyException {}

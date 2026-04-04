@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Broadcasting\PendingBroadcast;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
