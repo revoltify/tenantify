@@ -1,19 +1,14 @@
 includes:
-    - ./vendor/larastan/larastan/extension.neon
-    
+    - vendor/larastan/larastan/extension.neon
+    - vendor/nesbot/carbon/extension.neon
+
 parameters:
-    treatPhpDocTypesAsCertain: false
-    
-    # Paths to analyze
     paths:
         - src
 
-    excludePaths:
-        - src/Models/Concerns/BelongsToTenant.php
-        - src/Bootstrappers/SpatiePermissionsBootstrapper.php
+    level: max
 
-    # Level of analysis (0 = basic, 9 = strict)
-    level: 5
+    tmpDir: /tmp/phpstan
 
-    scanFiles:
-        - src/Models/Concerns/BelongsToTenant.php
+    ignoreErrors:
+        - identifier: trait.unused
