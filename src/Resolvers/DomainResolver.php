@@ -19,7 +19,7 @@ final class DomainResolver extends AbstractResolver
         $tenantModel = $this->getTenantModel();
 
         /** @var TenantInterface $tenant */
-        $tenant = $tenantModel::whereHas('domains', function (Builder $query) use ($domain) {
+        $tenant = $tenantModel::whereHas('domains', function (Builder $query) use ($domain): void {
             $query->where('domain', $domain);
         })->first();
 
@@ -34,7 +34,7 @@ final class DomainResolver extends AbstractResolver
     {
         $domain = $this->request->getHost();
 
-        if (empty($domain)) {
+        if ($domain === '' || $domain === '0') {
             throw TenantResolutionException::make();
         }
 
@@ -45,7 +45,7 @@ final class DomainResolver extends AbstractResolver
     {
         $parts = explode('.', $domain);
         if (current($parts) === 'www') {
-            $domain = mb_substr(implode('.', $parts), 4);
+            return mb_substr(implode('.', $parts), 4);
         }
 
         return $domain;

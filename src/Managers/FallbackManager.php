@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Managers;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\View;
 use Revoltify\Tenantify\Exceptions\TenantNotFoundException;
 use Revoltify\Tenantify\Managers\Contracts\FallbackHandlerInterface;
@@ -17,14 +19,14 @@ final class FallbackManager implements FallbackHandlerInterface
         return match ($fallbackType) {
             'throw' => $this->handleThrow($domain),
             'view' => $this->handleView($domain),
-            'redirect' => $this->handleRedirect($domain),
-            'abort' => $this->handleAbort($domain),
+            'redirect' => $this->handleRedirect(),
+            'abort' => $this->handleAbort(),
             'custom' => $this->handleCustom($domain),
             default => $this->handleThrow($domain),
         };
     }
 
-    private function handleThrow(string $domain)
+    private function handleThrow(string $domain): never
     {
         throw TenantNotFoundException::forDomain($domain);
     }
@@ -42,17 +44,16 @@ final class FallbackManager implements FallbackHandlerInterface
         ]);
     }
 
-    private function handleRedirect(string $domain)
+    private function handleRedirect(): Redirector|RedirectResponse
     {
         $redirectTo = config('tenantify.initialization.fallback.redirect_to', '/');
 
         return redirect($redirectTo);
     }
 
-    private function handleAbort(string $domain)
+    private function handleAbort(): void
     {
         $statusCode = config('tenantify.initialization.fallback.status_code', 404);
-
         abort($statusCode);
     }
 
@@ -64,7 +65,7 @@ final class FallbackManager implements FallbackHandlerInterface
             return $this->handleThrow($domain);
         }
 
-        $handler = app($handlerClass);
+        $handler = resolve($handlerClass);
 
         if (! $handler instanceof FallbackHandlerInterface) {
             return $this->handleThrow($domain);

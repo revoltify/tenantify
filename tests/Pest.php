@@ -11,9 +11,7 @@ function tempFile(string $fileName): string
 {
     $tempDir = __DIR__.'/temp';
 
-    if (! is_dir($tempDir) && ! mkdir($tempDir, 0777, true) && ! is_dir($tempDir)) {
-        throw new RuntimeException("Failed to create temp directory: $tempDir");
-    }
+    throw_if(! is_dir($tempDir) && ! mkdir($tempDir, 0777, true) && ! is_dir($tempDir), RuntimeException::class, 'Failed to create temp directory: '.$tempDir);
 
     return $tempDir.DIRECTORY_SEPARATOR.$fileName;
 }

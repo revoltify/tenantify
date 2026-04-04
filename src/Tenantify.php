@@ -21,7 +21,7 @@ final class Tenantify
     private bool $initialized = false;
 
     public function __construct(
-        private BootstrapperManager $bootstrapper
+        private readonly BootstrapperManager $bootstrapper
     ) {}
 
     public function initialize(TenantInterface|int|string $tenant): void
@@ -30,7 +30,7 @@ final class Tenantify
             $tenantId = $tenant;
             $tenant = $this->find($tenantId);
 
-            if (! $tenant) {
+            if ($tenant === null) {
                 throw TenantNotFoundException::make($tenantId);
             }
         }
@@ -50,7 +50,7 @@ final class Tenantify
 
     public function terminate(): void
     {
-        if ($this->isInitialized()) {
+        if ($this->initialized) {
 
             $this->bootstrapper->revert();
 
@@ -81,6 +81,6 @@ final class Tenantify
 
     public function getResolver(): ResolverInterface
     {
-        return app(ResolverInterface::class);
+        return resolve(ResolverInterface::class);
     }
 }

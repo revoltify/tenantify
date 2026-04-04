@@ -12,6 +12,7 @@ use Revoltify\Tenantify\Exceptions\TenantInitializationException;
 use Revoltify\Tenantify\Managers\FallbackManager;
 use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
 use Revoltify\Tenantify\Tenantify;
+use Throwable;
 
 trait InitializesTenant
 {
@@ -19,21 +20,20 @@ trait InitializesTenant
      * Initialize the tenant for the current request.
      *
      * @param  ResolverInterface|null  $resolver  Custom tenant resolver
-     * @return void
      *
      * @throws TenantInitializationException When tenant initialization critically fails
      */
-    public function initializeTenantify(?ResolverInterface $resolver = null)
+    public function initializeTenantify(?ResolverInterface $resolver = null): void
     {
         try {
-            $resolver = $resolver ?? app()->make(ResolverInterface::class);
+            $resolver ??= app()->make(ResolverInterface::class);
             $tenantify = app()->make(Tenantify::class);
 
             $tenant = $resolver->resolve();
             $tenantify->initialize($tenant);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // Handle failure in tenant initialization
-            $this->handleTenantInitializationFailure($e);
+            $this->handleTenantInitializationFailure($exception);
         }
     }
 
@@ -43,7 +43,7 @@ trait InitializesTenant
      *
      * @param  Exception  $e  The exception that occurred during initialization
      */
-    protected function handleTenantInitializationFailure(Exception $e): void
+    protected function handleTenantInitializationFailure(Throwable $e): void
     {
         $domain = request()->getHost();
 

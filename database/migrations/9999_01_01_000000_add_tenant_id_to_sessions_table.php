@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('sessions', function (Blueprint $table) {
+        Schema::table('sessions', function (Blueprint $table): void {
             $table->unsignedBigInteger('tenant_id')->after('id')->nullable();
             $table->index(['tenant_id']);
         });
@@ -24,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('sessions', function (Blueprint $table) {
+        Schema::table('sessions', function (Blueprint $table): void {
             $table->dropIndex(['tenant_id']);
             $table->dropColumn('tenant_id');
         });

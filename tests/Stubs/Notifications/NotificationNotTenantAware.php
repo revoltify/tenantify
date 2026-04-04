@@ -14,7 +14,7 @@ final class NotificationNotTenantAware extends Notification implements NotTenant
 {
     use Queueable;
 
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -27,7 +27,7 @@ final class NotificationNotTenantAware extends Notification implements NotTenant
             ->line('Say goodbye!');
     }
 
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [];
     }

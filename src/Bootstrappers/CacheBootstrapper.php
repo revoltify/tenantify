@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Bootstrappers;
 
+use Illuminate\Contracts\Cache\Factory;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
 use Revoltify\Tenantify\Managers\CacheManager;
@@ -13,33 +14,29 @@ final class CacheBootstrapper extends AbstractBootstrapper
 {
     protected int $priority = 20;
 
-    protected $originalCache;
+    private $originalCache;
 
-    public function __construct(protected Application $app) {}
+    public function __construct(private readonly Application $app) {}
 
     public function bootstrap(TenantInterface $tenant): void
     {
         $this->resetFacadeCache();
 
-        $this->originalCache = $this->originalCache ?? $this->app['cache'];
+        $this->originalCache ??= $this->app->make(Factory::class);
 
-        $this->app->extend('cache', function () {
-            return new CacheManager($this->app);
-        });
+        $this->app->extend('cache', fn (): CacheManager => new CacheManager($this->app));
     }
 
     public function revert(): void
     {
         $this->resetFacadeCache();
 
-        $this->app->extend('cache', function () {
-            return $this->originalCache;
-        });
+        $this->app->extend('cache', fn () => $this->originalCache);
 
         $this->originalCache = null;
     }
 
-    public function resetFacadeCache()
+    public function resetFacadeCache(): void
     {
         Cache::clearResolvedInstances();
     }

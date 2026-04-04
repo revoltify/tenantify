@@ -7,21 +7,21 @@ use Revoltify\Tenantify\Models\Tenant;
 use Revoltify\Tenantify\Tests\Stubs\Jobs\TestJob;
 use Spatie\Valuestore\Valuestore;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', true);
     config()->set('queue.default', 'sync');
 
-    $this->tenant = Tenant::create(['name' => 'Test']);
+    $this->tenant = Tenant::query()->create(['name' => 'Test']);
 
     $this->valuestore = Valuestore::make(tempFile('tenantAware.json'))->flush();
 });
 
-it('will check if updating the current tenant, the next job uses fresh data', function () {
+it('will check if updating the current tenant, the next job uses fresh data', function (): void {
     $this->tenant->initialize();
 
     $tenantOriginalName = $this->tenant->name;
 
-    app(Dispatcher::class)->dispatch(new TestJob($this->valuestore));
+    resolve(Dispatcher::class)->dispatch(new TestJob($this->valuestore));
 
     $this->artisan('queue:work --once');
 
@@ -33,7 +33,7 @@ it('will check if updating the current tenant, the next job uses fresh data', fu
         ->where('id', $this->tenant->id)
         ->update(['name' => $tenantUpdatedName]);
 
-    app(Dispatcher::class)->dispatch(new TestJob($this->valuestore));
+    resolve(Dispatcher::class)->dispatch(new TestJob($this->valuestore));
 
     $this->artisan('queue:work --once');
 

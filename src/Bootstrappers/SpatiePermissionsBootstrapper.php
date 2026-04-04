@@ -11,13 +11,13 @@ final class SpatiePermissionsBootstrapper extends AbstractBootstrapper
 {
     protected int $priority = 50;
 
-    protected ?PermissionRegistrar $registrar;
+    private ?PermissionRegistrar $registrar;
 
     public function __construct()
     {
         // Check if Spatie Permission class exists
         if (class_exists('Spatie\Permission\PermissionRegistrar')) {
-            $this->registrar = app(PermissionRegistrar::class);
+            $this->registrar = resolve(PermissionRegistrar::class);
         } else {
             $this->registrar = null;
         }
@@ -26,7 +26,7 @@ final class SpatiePermissionsBootstrapper extends AbstractBootstrapper
     public function bootstrap(TenantInterface $tenant): void
     {
         // Only execute if Spatie Permissions is installed
-        if ($this->registrar) {
+        if ($this->registrar instanceof PermissionRegistrar) {
             $this->registrar->cacheKey = 'tenant_'.$tenant->getTenantKey().'_permission';
         }
     }
@@ -34,7 +34,7 @@ final class SpatiePermissionsBootstrapper extends AbstractBootstrapper
     public function revert(): void
     {
         // Only execute if Spatie Permissions is installed
-        if ($this->registrar) {
+        if ($this->registrar instanceof PermissionRegistrar) {
             $this->registrar->cacheKey = 'permission';
         }
     }

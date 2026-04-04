@@ -19,7 +19,7 @@ if (! function_exists('tenant')) {
         }
 
         /** @var TenantInterface&Model $tenant */
-        $tenant = app(TenantInterface::class);
+        $tenant = resolve(TenantInterface::class);
 
         if (is_null($key)) {
             return $tenant;
@@ -35,7 +35,7 @@ if (! function_exists('tenantify')) {
      */
     function tenantify(): Tenantify
     {
-        return app(Tenantify::class);
+        return resolve(Tenantify::class);
     }
 }
 
@@ -74,7 +74,7 @@ if (! function_exists('clear_tenantify_cache')) {
             }
 
             return true;
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
     }

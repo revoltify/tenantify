@@ -2,6 +2,7 @@
 
 namespace Revoltify\Tenantify\Tests;
 
+use Illuminate\Contracts\Config\Repository;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\View;
@@ -47,8 +48,8 @@ abstract class TestCase extends \Orchestra\Testbench\TestCase
     protected function defineEnvironment($app)
     {
         // Set up your environment for testing
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('database.connections.sqlite', [
+        $app->make(Repository::class)->set('database.default', 'sqlite');
+        $app->make(Repository::class)->set('database.connections.sqlite', [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',

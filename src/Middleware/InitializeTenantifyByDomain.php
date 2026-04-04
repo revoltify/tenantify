@@ -15,8 +15,8 @@ final class InitializeTenantifyByDomain
     use InitializesTenant;
 
     public function __construct(
-        protected Tenantify $tenantify,
-        protected DomainResolver $resolver
+        private Tenantify $tenantify,
+        private DomainResolver $resolver
     ) {}
 
     public function handle(Request $request, Closure $next)

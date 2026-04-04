@@ -14,7 +14,7 @@ final class BootstrapperManager
     public function addBootstrapper(BootstrapperInterface $bootstrapper): void
     {
         $this->bootstrappers[] = $bootstrapper;
-        usort($this->bootstrappers, fn ($a, $b) => $a->getPriority() - $b->getPriority());
+        usort($this->bootstrappers, fn ($a, $b): int|float => $a->getPriority() - $b->getPriority());
     }
 
     public function bootstrap(TenantInterface $tenant): void

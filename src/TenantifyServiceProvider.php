@@ -6,6 +6,8 @@ namespace Revoltify\Tenantify;
 
 use Illuminate\Cache\CacheManager;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\ConnectionResolverInterface;
+use Illuminate\Session\SessionManager;
 use Illuminate\Support\ServiceProvider;
 use Revoltify\Tenantify\Commands\Install;
 use Revoltify\Tenantify\Concerns\InitializesTenant;
@@ -48,7 +50,7 @@ final class TenantifyServiceProvider extends ServiceProvider
     /**
      * Merge the package configuration with the application configuration.
      */
-    protected function mergeConfig(): void
+    private function mergeConfig(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/tenantify.php', 'tenantify');
     }
@@ -56,7 +58,7 @@ final class TenantifyServiceProvider extends ServiceProvider
     /**
      * Register core bindings in the service container.
      */
-    protected function registerBindings(): void
+    private function registerBindings(): void
     {
         $this->registerResolver();
         $this->registerBootstrappers();
@@ -68,14 +70,14 @@ final class TenantifyServiceProvider extends ServiceProvider
     /**
      * Register bootstrappers with the BootstrapperManager.
      */
-    protected function registerBootstrappers(): void
+    private function registerBootstrappers(): void
     {
         // Register BootstrapperManager as a singleton
-        $this->app->singleton(BootstrapperManager::class, function (Application $app) {
+        $this->app->singleton(BootstrapperManager::class, function (Application $app): BootstrapperManager {
             $manager = new BootstrapperManager;
 
             // Register bootstrappers from the configuration
-            collect(config('tenantify.bootstrappers', []))->each(function ($bootstrapper) use ($manager, $app) {
+            collect(config('tenantify.bootstrappers', []))->each(function ($bootstrapper) use ($manager, $app): void {
                 // Register the bootstrapper as a singleton
                 $app->singleton($bootstrapper);
 
@@ -118,27 +120,21 @@ final class TenantifyServiceProvider extends ServiceProvider
         $this->app->singleton(QueueManager::class);
 
         // Register GlobalCache as a singleton
-        $this->app->singleton('globalCache', function (Application $app) {
-            return new CacheManager($app);
-        });
+        $this->app->singleton('globalCache', fn (Application $app): CacheManager => new CacheManager($app));
 
         // Bind TenantInterface to the current tenant
-        $this->app->bind(TenantInterface::class, function (Application $app) {
-            return $app->make(Tenantify::class)->tenant();
-        });
+        $this->app->bind(TenantInterface::class, fn (Application $app): ?TenantInterface => $app->make(Tenantify::class)->tenant());
 
-        $this->app->bind(DomainInterface::class, function () {
-            return DomainResolver::$currentDomain;
-        });
+        $this->app->bind(DomainInterface::class, fn (): ?DomainInterface => DomainResolver::$currentDomain);
     }
 
     /**
      * Register session handler
      */
-    private function registerSessionHandler()
+    private function registerSessionHandler(): void
     {
-        $this->app['session']->extend('database', function (Application $app) {
-            $connection = $app['db']->connection(config('session.connection'));
+        $this->app->make(SessionManager::class)->extend('database', function (Application $app): DatabaseSessionManager {
+            $connection = $app->make(ConnectionResolverInterface::class)->connection(config('session.connection'));
             $table = config('session.table', 'sessions');
             $minutes = config('session.lifetime');
 
@@ -151,9 +147,9 @@ final class TenantifyServiceProvider extends ServiceProvider
     /**
      * Boot Queue Manager
      */
-    private function bootQueueManager()
+    private function bootQueueManager(): void
     {
-        $this->callAfterResolving('queue', function () {
+        $this->callAfterResolving('queue', function (): void {
             $this->app->make(QueueManager::class)->initialize();
         });
     }

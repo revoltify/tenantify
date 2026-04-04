@@ -63,11 +63,11 @@ abstract class AbstractResolver implements ResolverInterface
         try {
             return $this->remember(
                 $identifier,
-                fn () => $tenant
+                fn (): TenantInterface => $tenant
             );
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->clearCache($identifier);
-            throw $e;
+            throw $exception;
         }
     }
 

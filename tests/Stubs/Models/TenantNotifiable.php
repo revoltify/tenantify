@@ -17,7 +17,7 @@ final class TenantNotifiable extends Tenant
         'email',
     ];
 
-    public function getEmailAttribute()
+    protected function getEmailAttribute(): string
     {
         return 'test@revoltify.net';
     }

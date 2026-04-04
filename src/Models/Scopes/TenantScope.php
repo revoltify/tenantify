@@ -12,7 +12,7 @@ final class TenantScope implements Scope
 {
     public static string $tenantIdColumn = 'tenant_id';
 
-    public function apply(Builder $builder, Model $model)
+    public function apply(Builder $builder, Model $model): void
     {
         if (! tenantify()->isInitialized()) {
             return;
@@ -23,8 +23,6 @@ final class TenantScope implements Scope
 
     public function extend(Builder $builder): void
     {
-        $builder->macro('withoutTenantify', function (Builder $builder) {
-            return $builder->withoutGlobalScope(TenantScope::class);
-        });
+        $builder->macro('withoutTenantify', fn (Builder $builder) => $builder->withoutGlobalScope(TenantScope::class));
     }
 }

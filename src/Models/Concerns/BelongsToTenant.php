@@ -11,16 +11,14 @@ trait BelongsToTenant
 {
     public static $tenantIdColumn = 'tenant_id';
 
-    public static function bootBelongsToTenant()
+    public static function bootBelongsToTenant(): void
     {
         static::addGlobalScope(new TenantScope);
 
-        static::creating(function ($model) {
-            if (! $model->getAttribute(static::$tenantIdColumn) && ! $model->relationLoaded('tenant')) {
-                if (tenantify()->isInitialized()) {
-                    $model->setAttribute(static::$tenantIdColumn, tenant()->getTenantKey());
-                    $model->setRelation('tenant', tenant());
-                }
+        static::creating(function ($model): void {
+            if (! $model->getAttribute(static::$tenantIdColumn) && ! $model->relationLoaded('tenant') && tenantify()->isInitialized()) {
+                $model->setAttribute(static::$tenantIdColumn, tenant()->getTenantKey());
+                $model->setRelation('tenant', tenant());
             }
         });
     }

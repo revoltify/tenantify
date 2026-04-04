@@ -10,23 +10,23 @@ use Revoltify\Tenantify\Tests\Stubs\Jobs\TenantAwareTestJob;
 use Revoltify\Tenantify\Tests\Stubs\Jobs\TestJob;
 use Spatie\Valuestore\Valuestore;
 
-beforeEach(function () {
+beforeEach(function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', true);
     config()->set('queue.default', 'sync');
 
-    $this->tenant = Tenant::create(['name' => 'Test']);
+    $this->tenant = Tenant::query()->create(['name' => 'Test']);
 
     $this->valuestore = Valuestore::make(tempFile('tenantAware.json'))->flush();
 });
 
-it('will fail a job when no tenant is present and queues are tenant aware by default', function () {
+it('will fail a job when no tenant is present and queues are tenant aware by default', function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', true);
 
     $job = new TestJob($this->valuestore);
 
     try {
-        app(Dispatcher::class)->dispatch($job);
-    } catch (TenantNotFoundInTenantAwareJobException $exception) {
+        resolve(Dispatcher::class)->dispatch($job);
+    } catch (TenantNotFoundInTenantAwareJobException) {
         // Assert the job did not run
         expect($this->valuestore->has('tenantId'))->toBeFalse();
 
@@ -36,14 +36,14 @@ it('will fail a job when no tenant is present and queues are tenant aware by def
     $this->fail();
 });
 
-it('will fail a job when no tenant is present and job implements the TenantAware interface', function () {
+it('will fail a job when no tenant is present and job implements the TenantAware interface', function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', false);
 
     $job = new TenantAwareTestJob($this->valuestore);
 
     try {
-        app(Dispatcher::class)->dispatch($job);
-    } catch (TenantNotFoundInTenantAwareJobException $exception) {
+        resolve(Dispatcher::class)->dispatch($job);
+    } catch (TenantNotFoundInTenantAwareJobException) {
         expect($this->valuestore)->has('tenantId')->toBeFalse();
 
         return;
@@ -52,12 +52,12 @@ it('will fail a job when no tenant is present and job implements the TenantAware
     $this->fail();
 });
 
-it('will not fail a job when no tenant is present and queues are not tenant aware by default', function () {
+it('will not fail a job when no tenant is present and queues are not tenant aware by default', function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', false);
 
     $job = new TestJob($this->valuestore);
 
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     expect($this->valuestore)
         ->has('tenantId')->toBeTrue()
@@ -66,12 +66,12 @@ it('will not fail a job when no tenant is present and queues are not tenant awar
 
 test(
     'it will not fail a job when no tenant is present and job implements the NotTenantAware interface',
-    function () {
+    function (): void {
         config()->set('tenantify.queue.tenant_aware_by_default', true);
 
         $job = new NotTenantAwareTestJob($this->valuestore);
 
-        app(Dispatcher::class)->dispatch($job);
+        resolve(Dispatcher::class)->dispatch($job);
 
         expect($this->valuestore)
             ->has('tenantId')->toBeTrue()
@@ -79,7 +79,7 @@ test(
     }
 );
 
-it('will forget any current tenant when starting a not tenant aware job', function () {
+it('will forget any current tenant when starting a not tenant aware job', function (): void {
     $this->tenant->initialize();
 
     $job = new NotTenantAwareTestJob($this->valuestore);
@@ -87,7 +87,7 @@ it('will forget any current tenant when starting a not tenant aware job', functi
     // Simulate a tenant being set from a previous queue job
     expect(Tenant::hasCurrent())->toBeTrue();
 
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     // Assert that the active tenant was forgotten
     $this->assertNull(Tenant::current());

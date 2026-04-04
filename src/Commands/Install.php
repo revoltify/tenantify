@@ -7,6 +7,7 @@ namespace Revoltify\Tenantify\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Isolatable;
 use Illuminate\Support\Facades\Process;
+use Revoltify\Tenantify\TenantifyServiceProvider;
 
 final class Install extends Command implements Isolatable
 {
@@ -39,7 +40,7 @@ final class Install extends Command implements Isolatable
     /**
      * Install the configuration file.
      */
-    protected function installConfig(): void
+    private function installConfig(): void
     {
         $this->publishStep(
             name: 'Publishing config file',
@@ -52,7 +53,7 @@ final class Install extends Command implements Isolatable
     /**
      * Install the migration files.
      */
-    protected function installMigrations(): void
+    private function installMigrations(): void
     {
         $migrationFiles = [
             'database/migrations/0000_01_01_000000_create_tenants_table.php',
@@ -71,7 +72,7 @@ final class Install extends Command implements Isolatable
     /**
      * Execute a publication step.
      */
-    protected function publishStep(
+    private function publishStep(
         string $name,
         ?string $tag = null,
         ?string $file = null,
@@ -90,7 +91,7 @@ final class Install extends Command implements Isolatable
 
         $this->handleLineSpacing($newLineBefore);
 
-        $this->components->task($name, fn () => $this->publishFiles($tag));
+        $this->components->task($name, fn (): bool => $this->publishFiles($tag));
 
         $this->displayPublishedFiles($files);
 
@@ -100,7 +101,7 @@ final class Install extends Command implements Isolatable
     /**
      * Ask for GitHub support and open browser if accepted.
      */
-    protected function askForSupport(): void
+    private function askForSupport(): void
     {
         if (! $this->components->confirm('Would you like to show your support by starring the project on GitHub?', true)) {
             return;
@@ -126,7 +127,7 @@ final class Install extends Command implements Isolatable
      */
     private function formatStepName(string $name, ?string $file): string
     {
-        return $file !== null ? "$name [$file]" : $name;
+        return $file !== null ? sprintf('%s [%s]', $name, $file) : $name;
     }
 
     /**
@@ -140,7 +141,7 @@ final class Install extends Command implements Isolatable
 
         if ($files !== null) {
             return collect($files)
-                ->contains(fn (string $file) => file_exists(base_path($file)));
+                ->contains(fn (string $file): bool => file_exists(base_path($file)));
         }
 
         return false;
@@ -152,7 +153,7 @@ final class Install extends Command implements Isolatable
     private function getExistsWarning(?string $file): string
     {
         return $file !== null
-        ? "File [$file] already exists."
+        ? sprintf('File [%s] already exists.', $file)
         : 'Files already exist.';
     }
 
@@ -176,7 +177,7 @@ final class Install extends Command implements Isolatable
         }
 
         return $this->callSilent('vendor:publish', [
-            '--provider' => 'Revoltify\Tenantify\TenantifyServiceProvider',
+            '--provider' => TenantifyServiceProvider::class,
             '--tag' => $tag,
         ]) === self::SUCCESS;
     }
@@ -188,7 +189,7 @@ final class Install extends Command implements Isolatable
     {
         if ($files !== null) {
             $this->components->bulletList(
-                collect($files)->map(fn (string $file) => "[$file]")->toArray()
+                collect($files)->map(fn (string $file): string => sprintf('[%s]', $file))->all()
             );
         }
     }

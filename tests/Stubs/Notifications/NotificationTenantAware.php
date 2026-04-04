@@ -14,7 +14,7 @@ final class NotificationTenantAware extends Notification implements ShouldQueue,
 {
     use Queueable;
 
-    public function via($notifiable)
+    public function via($notifiable): array
     {
         return ['mail'];
     }
@@ -27,7 +27,7 @@ final class NotificationTenantAware extends Notification implements ShouldQueue,
             ->line('Say goodbye!');
     }
 
-    public function toArray($notifiable)
+    public function toArray($notifiable): array
     {
         return [];
     }

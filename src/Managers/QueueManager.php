@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Managers;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobRetryRequested;
 use Illuminate\Support\Arr;
@@ -17,20 +18,13 @@ use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Models\Tenant;
 use Throwable;
 
-final class QueueManager
+final readonly class QueueManager
 {
-    /**
-     * @var \Illuminate\Queue\QueueManager
-     */
-    private $queue;
-
     /**
      * QueueManager constructor.
      */
-    public function __construct(\Illuminate\Queue\QueueManager $queue)
+    public function __construct(private \Illuminate\Queue\QueueManager $queue)
     {
-        $this->queue = $queue;
-
         $this->setupPayloadGenerator();
     }
 
@@ -48,7 +42,7 @@ final class QueueManager
     private function setupPayloadGenerator(): void
     {
         if (! $this->queue instanceof QueueFake) {
-            $this->queue->createPayloadUsing(fn () => $this->getPayload());
+            $this->queue->createPayloadUsing(fn (): array => $this->getPayload());
         }
     }
 
@@ -71,11 +65,11 @@ final class QueueManager
      */
     private function registerQueueListeners(): void
     {
-        app('events')->listen(JobProcessing::class, function (JobProcessing $event) {
+        resolve(Dispatcher::class)->listen(JobProcessing::class, function (JobProcessing $event): void {
             $this->handleQueueEvent($event);
         });
 
-        app('events')->listen(JobRetryRequested::class, function (JobRetryRequested $event) {
+        resolve(Dispatcher::class)->listen(JobRetryRequested::class, function (JobRetryRequested $event): void {
             $this->handleQueueEvent($event);
         });
     }
@@ -109,6 +103,7 @@ final class QueueManager
             if ($tenantId = $this->getTenantIdFromPayload($event)) {
                 tenantify()->initialize($tenantId);
             }
+
             $command = $this->unserializeCommand($payload);
         }
 
@@ -209,8 +204,8 @@ final class QueueManager
 
         $tenant = $this->resolveTenant($tenantId);
 
-        if (! $tenant) {
-            $this->handleMissingTenant($event, "No tenant found for ID: {$tenantId}");
+        if (! $tenant instanceof TenantInterface) {
+            $this->handleMissingTenant($event, 'No tenant found for ID: '.$tenantId);
         }
 
         tenantify()->initialize($tenant);

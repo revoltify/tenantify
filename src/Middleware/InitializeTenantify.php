@@ -14,7 +14,7 @@ final class InitializeTenantify
     use InitializesTenant;
 
     public function __construct(
-        protected Tenantify $tenantify
+        private Tenantify $tenantify
     ) {}
 
     public function handle(Request $request, Closure $next)

@@ -6,13 +6,13 @@ namespace Revoltify\Tenantify\Exceptions;
 
 final class TenantNotFoundException extends TenantifyException
 {
-    public static function make(int|string $tenantId)
+    public static function make(int|string $tenantId): self
     {
-        return new self("The tenant with ID [{$tenantId}] could not be identified.");
+        return new self(sprintf('The tenant with ID [%s] could not be identified.', $tenantId));
     }
 
-    public static function forDomain(string $domain)
+    public static function forDomain(string $domain): self
     {
-        return new self("The tenant with Domain [{$domain}] could not be identified.");
+        return new self(sprintf('The tenant with Domain [%s] could not be identified.', $domain));
     }
 }

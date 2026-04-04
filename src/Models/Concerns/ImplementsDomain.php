@@ -15,7 +15,7 @@ trait ImplementsDomain
         }
 
         /** @var static */
-        return app(DomainInterface::class);
+        return resolve(DomainInterface::class);
     }
 
     public static function hasCurrent(): bool

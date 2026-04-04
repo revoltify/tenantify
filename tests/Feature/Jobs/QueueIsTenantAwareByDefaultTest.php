@@ -11,23 +11,23 @@ use Revoltify\Tenantify\Tests\Stubs\Jobs\TenantAwareTestJob;
 use Revoltify\Tenantify\Tests\Stubs\Jobs\TestJob;
 use Spatie\Valuestore\Valuestore;
 
-beforeEach(function () {
+beforeEach(function (): void {
     Event::fake(JobFailed::class);
 
     config()->set('tenantify.queue.tenant_aware_by_default', true);
 
-    $this->tenant = Tenant::create(['name' => 'Test']);
+    $this->tenant = Tenant::query()->create(['name' => 'Test']);
 
     $this->valuestore = Valuestore::make(tempFile('tenantAware.json'))->flush();
 
     Event::assertNotDispatched(JobFailed::class);
 });
 
-it('will inject the current tenant id in a job', function () {
+it('will inject the current tenant id in a job', function (): void {
     $this->tenant->initialize();
 
     $job = new TestJob($this->valuestore);
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     $this->tenant->terminate();
 
@@ -38,13 +38,13 @@ it('will inject the current tenant id in a job', function () {
     expect($this->tenant->id)->toEqual($currentTenantIdInJob);
 });
 
-it('will inject the right tenant even when the current tenant switches', function () {
-    $anotherTenant = Tenant::create(['name' => 'Test 2']);
+it('will inject the right tenant even when the current tenant switches', function (): void {
+    $anotherTenant = Tenant::query()->create(['name' => 'Test 2']);
 
     $this->tenant->initialize();
 
     $job = new TestJob($this->valuestore);
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     $this->artisan('queue:work --once');
 
@@ -55,7 +55,7 @@ it('will inject the right tenant even when the current tenant switches', functio
     $anotherTenant->initialize();
 
     $job = new TestJob($this->valuestore);
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     $this->artisan('queue:work --once');
 
@@ -64,13 +64,13 @@ it('will inject the right tenant even when the current tenant switches', functio
     expect($anotherTenant->id)->toEqual($currentTenantIdInJob);
 });
 
-it('will not make jobs tenant aware if the config settings is set to false', function () {
+it('will not make jobs tenant aware if the config settings is set to false', function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', false);
 
     $this->tenant->initialize();
 
     $job = new TestJob($this->valuestore);
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     $this->artisan('queue:work --once')->assertExitCode(0);
 
@@ -78,13 +78,13 @@ it('will not make jobs tenant aware if the config settings is set to false', fun
     expect($currentTenantIdInJob)->toBeNull();
 });
 
-it('will always make jobs tenant aware if they implement the TenantAware interface', function () {
+it('will always make jobs tenant aware if they implement the TenantAware interface', function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', false);
 
     $this->tenant->initialize();
 
     $job = new TenantAwareTestJob($this->valuestore);
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     $this->artisan('queue:work --once')->assertExitCode(0);
 
@@ -92,13 +92,13 @@ it('will always make jobs tenant aware if they implement the TenantAware interfa
     expect($this->tenant->id)->toEqual($currentTenantIdInJob);
 });
 
-it('will not make a job tenant aware if it implements NotTenantAware', function () {
+it('will not make a job tenant aware if it implements NotTenantAware', function (): void {
     config()->set('tenantify.queue.tenant_aware_by_default', true);
 
     $this->tenant->initialize();
 
     $job = new NotTenantAwareTestJob($this->valuestore);
-    app(Dispatcher::class)->dispatch($job);
+    resolve(Dispatcher::class)->dispatch($job);
 
     $this->artisan('queue:work --once')->assertExitCode(0);
 
