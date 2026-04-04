@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Revoltify\Tenantify\Resolvers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Revoltify\Tenantify\Exceptions\TenantResolutionException;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
@@ -16,10 +17,11 @@ final class DomainResolver extends AbstractResolver
             throw TenantResolutionException::invalidDomainFormat($domain);
         }
 
+        /** @var class-string<Model> $tenantModel */
         $tenantModel = $this->getTenantModel();
 
-        /** @var TenantInterface $tenant */
-        $tenant = $tenantModel::whereHas('domains', function (Builder $query) use ($domain): void {
+        /** @var TenantInterface|null $tenant */
+        $tenant = $tenantModel::query()->whereHas('domains', function (Builder $query) use ($domain): void {
             $query->where('domain', $domain);
         })->first();
 

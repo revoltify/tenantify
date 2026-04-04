@@ -7,6 +7,9 @@ namespace Revoltify\Tenantify\Models\Concerns;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Revoltify\Tenantify\Models\Scopes\TenantScope;
 
+/**
+ * @phpstan-ignore trait.unused
+ */
 trait BelongsToTenant
 {
     public static $tenantIdColumn = 'tenant_id';

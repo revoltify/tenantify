@@ -15,8 +15,13 @@ class Domain extends Model implements DomainInterface
 
     protected $guarded = [];
 
+    /**
+     * @return BelongsTo<Tenant, $this>
+     * @phpstan-ignore method.childReturnType
+     */
     public function tenant(): BelongsTo
     {
+        /** @var class-string<Tenant> $tenantClass */
         $tenantClass = config('tenantify.models.tenant', Tenant::class);
 
         return $this->belongsTo($tenantClass);

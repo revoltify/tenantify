@@ -30,6 +30,9 @@ trait InitializesTenant
             $tenantify = app()->make(Tenantify::class);
 
             $tenant = $resolver->resolve();
+
+            throw_if($tenant === null, TenantInitializationException::class, 'Could not resolve tenant.');
+
             $tenantify->initialize($tenant);
         } catch (Exception $exception) {
             // Handle failure in tenant initialization

@@ -9,12 +9,15 @@ use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
 final class BootstrapperManager
 {
+    /**
+     * @var array<int, BootstrapperInterface>
+     */
     private array $bootstrappers = [];
 
     public function addBootstrapper(BootstrapperInterface $bootstrapper): void
     {
         $this->bootstrappers[] = $bootstrapper;
-        usort($this->bootstrappers, fn ($a, $b): int|float => $a->getPriority() - $b->getPriority());
+        usort($this->bootstrappers, fn (BootstrapperInterface $a, BootstrapperInterface $b): int => $a->getPriority() - $b->getPriority());
     }
 
     public function bootstrap(TenantInterface $tenant): void

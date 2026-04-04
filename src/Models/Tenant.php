@@ -21,8 +21,13 @@ class Tenant extends Model implements TenantInterface
 
     protected $guarded = [];
 
+    /**
+     * @return HasMany<Domain, $this>
+     * @phpstan-ignore method.childReturnType
+     */
     public function domains(): HasMany
     {
+        /** @var class-string<Domain> $domainClass */
         $domainClass = config('tenantify.models.domain', Domain::class);
 
         return $this->hasMany($domainClass);

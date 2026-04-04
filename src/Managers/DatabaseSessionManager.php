@@ -30,10 +30,11 @@ final class DatabaseSessionManager extends DatabaseSessionHandler
      * Get the default payload for the session.
      *
      * @param  string  $data
-     * @return array
+     * @return array<string, mixed>
      */
     protected function getDefaultPayload($data)
     {
+        /** @var array<string, mixed> $payload */
         $payload = parent::getDefaultPayload($data);
 
         if ($this->hasTenant()) {
@@ -56,6 +57,9 @@ final class DatabaseSessionManager extends DatabaseSessionHandler
      */
     private function getTenantId(): int|string|null
     {
-        return tenant('id');
+        /** @var int|string|null $id */
+        $id = tenant('id');
+
+        return $id;
     }
 }

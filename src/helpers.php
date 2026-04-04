@@ -51,6 +51,7 @@ if (! function_exists('tenant_id')) {
             return null;
         }
 
+        /** @var TenantInterface $tenant */
         return $tenant->getTenantKey();
     }
 }

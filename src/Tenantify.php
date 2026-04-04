@@ -30,7 +30,7 @@ final class Tenantify
             $tenantId = $tenant;
             $tenant = $this->find($tenantId);
 
-            if ($tenant === null) {
+            if (! $tenant instanceof TenantInterface) {
                 throw TenantNotFoundException::make($tenantId);
             }
         }
@@ -50,11 +50,12 @@ final class Tenantify
 
     public function terminate(): void
     {
-        if ($this->initialized) {
+        if ($this->initialized && $this->tenant instanceof TenantInterface) {
 
             $this->bootstrapper->revert();
 
-            Event::dispatch(new TenantEnded($this->tenant));
+            $tenant = $this->tenant;
+            Event::dispatch(new TenantEnded($tenant));
 
             $this->tenant = null;
 
@@ -72,11 +73,15 @@ final class Tenantify
         return $this->tenant;
     }
 
-    public function find(int|string $id): TenantInterface|Model|null
+    public function find(int|string $id): ?TenantInterface
     {
+        /** @var class-string<Model> $tenantModel */
         $tenantModel = config('tenantify.models.tenant', Tenant::class);
 
-        return $tenantModel::whereId($id)->first();
+        /** @var TenantInterface|null $tenant */
+        $tenant = $tenantModel::whereId($id)->first();
+
+        return $tenant;
     }
 
     public function getResolver(): ResolverInterface

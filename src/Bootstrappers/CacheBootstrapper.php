@@ -14,7 +14,7 @@ final class CacheBootstrapper extends AbstractBootstrapper
 {
     protected int $priority = 20;
 
-    private $originalCache;
+    private ?Factory $originalCache = null;
 
     public function __construct(private readonly Application $app) {}
 
@@ -31,7 +31,7 @@ final class CacheBootstrapper extends AbstractBootstrapper
     {
         $this->resetFacadeCache();
 
-        $this->app->extend('cache', fn () => $this->originalCache);
+        $this->app->extend('cache', fn (): ?Factory => $this->originalCache);
 
         $this->originalCache = null;
     }

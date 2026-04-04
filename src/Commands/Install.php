@@ -71,6 +71,8 @@ final class Install extends Command implements Isolatable
 
     /**
      * Execute a publication step.
+     *
+     * @param  array<int, string>|null  $files
      */
     private function publishStep(
         string $name,
@@ -132,6 +134,8 @@ final class Install extends Command implements Isolatable
 
     /**
      * Check if files already exist and publishing should be skipped.
+     *
+     * @param  array<int, string>|null  $files
      */
     private function shouldSkipPublishing(?string $file, ?array $files): bool
     {
@@ -184,6 +188,8 @@ final class Install extends Command implements Isolatable
 
     /**
      * Display the list of published files.
+     *
+     * @param  array<int, string>|null  $files
      */
     private function displayPublishedFiles(?array $files): void
     {

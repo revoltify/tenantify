@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Revoltify\Tenantify\Managers;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Events\JobRetryRequested;
 use Illuminate\Support\Arr;
@@ -48,15 +49,20 @@ final readonly class QueueManager
 
     /**
      * Get payload for queue job.
+     *
+     * @return array<string, mixed>
      */
     private function getPayload(): array
     {
-        if (! tenant()) {
+        /** @var TenantInterface|null $tenant */
+        $tenant = tenant();
+
+        if (! $tenant) {
             return [];
         }
 
         return [
-            'tenant_id' => tenant()->getTenantKey(),
+            'tenant_id' => $tenant->getTenantKey(),
         ];
     }
 
@@ -114,13 +120,18 @@ final readonly class QueueManager
 
     /**
      * Get event payload.
+     *
+     * @return array<string, mixed>
      */
     private function getEventPayload(JobProcessing|JobRetryRequested $event): array
     {
-        return match (true) {
+        /** @var array<string, mixed> $payload */
+        $payload = match (true) {
             $event instanceof JobProcessing => $event->job->payload(),
             $event instanceof JobRetryRequested => $event->payload(),
         };
+
+        return $payload;
     }
 
     /**
@@ -128,24 +139,40 @@ final readonly class QueueManager
      */
     private function getTenantIdFromPayload(JobProcessing|JobRetryRequested $event): int|string|null
     {
-        return Arr::get($this->getEventPayload($event), 'tenant_id');
+        /** @var int|string|null $tenantId */
+        $tenantId = Arr::get($this->getEventPayload($event), 'tenant_id');
+
+        return $tenantId;
     }
 
     /**
      * Unserialize command from payload.
+     *
+     * @param  array<string, mixed>  $payload
      */
     private function unserializeCommand(array $payload): object
     {
-        return unserialize($payload['data']['command']);
+        /** @var array<string, mixed> $data */
+        $data = $payload['data'] ?? [];
+        /** @var string $command */
+        $command = $data['command'] ?? '';
+
+        /** @var object $unserialized */
+        $unserialized = unserialize($command);
+
+        return $unserialized;
     }
 
     /**
      * Resolve job from queueable.
+     *
+     * @return object
      */
     private function resolveJob(object $queueable)
     {
+        /** @var string|null $jobMapping */
         $jobMapping = Arr::get(
-            config('tenantify.queue.queueable_to_job', []),
+            (array) config('tenantify.queue.queueable_to_job', []),
             $queueable::class
         );
 
@@ -154,14 +181,22 @@ final readonly class QueueManager
         }
 
         if (method_exists($queueable, $jobMapping)) {
-            return $queueable->{$jobMapping}();
+            /** @var object $resolved */
+            $resolved = $queueable->{$jobMapping}();
+
+            return $resolved;
         }
 
-        return $queueable->{$jobMapping};
+        /** @var object $resolvedProperty */
+        $resolvedProperty = $queueable->{$jobMapping};
+
+        return $resolvedProperty;
     }
 
     /**
      * Check if job is tenant aware.
+     *
+     * @param  object  $job
      */
     private function checkJobTenantAwareness($job): bool
     {
@@ -178,11 +213,11 @@ final readonly class QueueManager
         }
 
         // Check configuration
-        if (in_array($jobClass, config('tenantify.queue.tenant_aware_jobs', []))) {
+        if (in_array($jobClass, (array) config('tenantify.queue.tenant_aware_jobs', []))) {
             return true;
         }
 
-        if (in_array($jobClass, config('tenantify.queue.not_tenant_aware_jobs', []))) {
+        if (in_array($jobClass, (array) config('tenantify.queue.not_tenant_aware_jobs', []))) {
             return false;
         }
 
@@ -206,6 +241,8 @@ final readonly class QueueManager
 
         if (! $tenant instanceof TenantInterface) {
             $this->handleMissingTenant($event, 'No tenant found for ID: '.$tenantId);
+
+            return;
         }
 
         tenantify()->initialize($tenant);
@@ -216,9 +253,13 @@ final readonly class QueueManager
      */
     private function resolveTenant(int|string|null $tenantId): ?TenantInterface
     {
+        /** @var class-string<Model> $tenantModel */
         $tenantModel = config('tenantify.models.tenant', Tenant::class);
 
-        return $tenantModel::find($tenantId);
+        /** @var TenantInterface|null $tenant */
+        $tenant = $tenantModel::query()->find($tenantId);
+
+        return $tenant;
     }
 
     /**

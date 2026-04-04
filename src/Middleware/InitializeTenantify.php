@@ -17,7 +17,7 @@ final class InitializeTenantify
         private Tenantify $tenantify
     ) {}
 
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if (! $this->tenantify->isInitialized()) {
             $this->initializeTenantify();

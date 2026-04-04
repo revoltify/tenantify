@@ -9,6 +9,3 @@ parameters:
     level: max
 
     tmpDir: /tmp/phpstan
-
-    ignoreErrors:
-        - identifier: trait.unused

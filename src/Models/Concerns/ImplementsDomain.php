@@ -30,7 +30,9 @@ trait ImplementsDomain
 
     public function getDomainKey(): int|string
     {
-        return $this->getAttribute($this->getDomainKeyName());
+        $value = $this->getAttribute($this->getDomainKeyName());
+
+        return is_numeric($value) ? (int) $value : (is_string($value) ? $value : '');
     }
 
     public function isCurrent(): bool

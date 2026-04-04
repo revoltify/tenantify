@@ -19,7 +19,7 @@ final class InitializeTenantifyByDomain
         private DomainResolver $resolver
     ) {}
 
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next): mixed
     {
         if (! $this->tenantify->isInitialized()) {
             $this->initializeTenantify($this->resolver);

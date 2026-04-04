@@ -8,7 +8,10 @@ trait ImplementsTenant
 {
     public static function current(): ?static
     {
-        return tenant();
+        /** @var static|null $tenant */
+        $tenant = tenant();
+
+        return $tenant;
     }
 
     public static function hasCurrent(): bool
@@ -23,7 +26,9 @@ trait ImplementsTenant
 
     public function getTenantKey(): int|string
     {
-        return $this->getAttribute($this->getTenantKeyName());
+        $value = $this->getAttribute($this->getTenantKeyName());
+
+        return is_numeric($value) ? (int) $value : (is_string($value) ? $value : '');
     }
 
     public function initialize(): static

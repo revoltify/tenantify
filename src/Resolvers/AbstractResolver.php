@@ -4,20 +4,23 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Resolvers;
 
+use Closure;
 use Exception;
 use Illuminate\Cache\Repository as Cache;
 use Illuminate\Http\Request;
+use Revoltify\Tenantify\Models\Contracts\DomainInterface;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Models\Tenant;
 use Revoltify\Tenantify\Resolvers\Contracts\ResolverInterface;
 
 abstract class AbstractResolver implements ResolverInterface
 {
+    /** @var DomainInterface|null */
     public static $currentDomain;
 
-    protected bool $useCache;
+    protected bool $useCache = false;
 
-    protected int $cacheTTL;
+    protected int $cacheTTL = 3600;
 
     protected string $cachePrefix;
 
@@ -61,10 +64,13 @@ abstract class AbstractResolver implements ResolverInterface
         $this->setCurrentDomain($tenant);
 
         try {
-            return $this->remember(
+            /** @var TenantInterface|null $resolvedTenant */
+            $resolvedTenant = $this->remember(
                 $identifier,
                 fn (): TenantInterface => $tenant
             );
+
+            return $resolvedTenant;
         } catch (Exception $exception) {
             $this->clearCache($identifier);
             throw $exception;
@@ -73,8 +79,11 @@ abstract class AbstractResolver implements ResolverInterface
 
     protected function initializeCache(): void
     {
-        $this->useCache = config('tenantify.resolver.cache.enabled', false);
-        $this->cacheTTL = config('tenantify.resolver.cache.ttl', 3600);
+        $this->useCache = (bool) config('tenantify.resolver.cache.enabled', false);
+
+        $ttl = config('tenantify.resolver.cache.ttl', 3600);
+        $this->cacheTTL = is_numeric($ttl) ? (int) $ttl : 3600;
+
         $this->cachePrefix = $this->getCachePrefix();
     }
 
@@ -88,7 +97,13 @@ abstract class AbstractResolver implements ResolverInterface
         return $this->cachePrefix.md5($key);
     }
 
-    protected function remember(string $key, callable $callback): mixed
+    /**
+     * @template TCacheValue
+     *
+     * @param  Closure(): TCacheValue  $callback
+     * @return TCacheValue
+     */
+    protected function remember(string $key, Closure $callback): mixed
     {
         if (! $this->useCache) {
             return $callback();
@@ -103,12 +118,18 @@ abstract class AbstractResolver implements ResolverInterface
 
     protected function getTenantModel(): string
     {
-        return config('tenantify.models.tenant', Tenant::class);
+        $model = config('tenantify.models.tenant', Tenant::class);
+
+        return is_string($model) ? $model : Tenant::class;
     }
 
     private function setCurrentDomain(TenantInterface $tenant): void
     {
-        /** @phpstan-ignore-next-line */
-        static::$currentDomain = $tenant->domains->where('domain', $this->request->getHost())->first();
+        $domain = $tenant->domains()->where('domain', $this->request->getHost())->first();
+
+        /** @var DomainInterface|null $domainInterface */
+        $domainInterface = $domain;
+
+        static::$currentDomain = $domainInterface;
     }
 }

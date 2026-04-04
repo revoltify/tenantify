@@ -16,7 +16,7 @@ final class SpatiePermissionsBootstrapper extends AbstractBootstrapper
     public function __construct()
     {
         // Check if Spatie Permission class exists
-        if (class_exists('Spatie\Permission\PermissionRegistrar')) {
+        if (class_exists(PermissionRegistrar::class)) {
             $this->registrar = resolve(PermissionRegistrar::class);
         } else {
             $this->registrar = null;

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Models\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 interface DomainInterface
@@ -12,6 +13,9 @@ interface DomainInterface
 
     public static function hasCurrent(): bool;
 
+    /**
+     * @return BelongsTo<Model, Model>
+     */
     public function tenant(): BelongsTo;
 
     public function getDomainKey(): int|string;

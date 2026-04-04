@@ -10,11 +10,12 @@ final class SessionBootstrapper extends AbstractBootstrapper
 {
     protected int $priority = 10;
 
-    private string $originalPrefix;
+    private ?string $originalPrefix = null;
 
     public function bootstrap(TenantInterface $tenant): void
     {
-        $this->originalPrefix = config('session.cookie');
+        $prefix = config('session.cookie');
+        $this->originalPrefix = is_string($prefix) ? $prefix : '';
 
         config(['session.cookie' => $this->generatePrefix($tenant)]);
     }
@@ -24,14 +25,17 @@ final class SessionBootstrapper extends AbstractBootstrapper
         config(['session.cookie' => $this->originalPrefix]);
     }
 
-    private function generatePrefix(TenantInterface $tenant)
+    private function generatePrefix(TenantInterface $tenant): string
     {
-        return str($this->originalPrefix)
+        $tenantPrefix = config('tenantify.session.prefix', 'tenant');
+        $tenantPrefix = is_string($tenantPrefix) ? $tenantPrefix : 'tenant';
+
+        return str((string) $this->originalPrefix)
             ->rtrim('_')
             ->append('_')
-            ->append(config('tenantify.session.prefix', 'tenant'))
+            ->append($tenantPrefix)
             ->append('_')
-            ->append($tenant->getTenantKey())
+            ->append((string) $tenant->getTenantKey())
             ->toString();
     }
 }

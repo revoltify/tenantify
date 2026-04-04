@@ -76,13 +76,18 @@ final class TenantifyServiceProvider extends ServiceProvider
         $this->app->singleton(BootstrapperManager::class, function (Application $app): BootstrapperManager {
             $manager = new BootstrapperManager;
 
-            // Register bootstrappers from the configuration
-            collect(config('tenantify.bootstrappers', []))->each(function ($bootstrapper) use ($manager, $app): void {
+            /** @var array<int, class-string> $bootstrappers */
+            $bootstrappers = config('tenantify.bootstrappers', []);
+
+            collect($bootstrappers)->each(function (string $bootstrapper) use ($manager, $app): void {
                 // Register the bootstrapper as a singleton
                 $app->singleton($bootstrapper);
 
+                /** @var Bootstrappers\Contracts\BootstrapperInterface $instance */
+                $instance = $app->make($bootstrapper);
+
                 // Add the bootstrapper to the BootstrapperManager
-                $manager->addBootstrapper($app->make($bootstrapper));
+                $manager->addBootstrapper($instance);
             });
 
             return $manager;
@@ -94,9 +99,12 @@ final class TenantifyServiceProvider extends ServiceProvider
      */
     private function registerResolver(): void
     {
+        $resolverClass = config('tenantify.resolver.class');
+        $resolverClass = is_string($resolverClass) ? $resolverClass : null;
+
         $this->app->singleton(
             ResolverInterface::class,
-            config('tenantify.resolver.class')
+            $resolverClass
         );
     }
 
@@ -134,9 +142,15 @@ final class TenantifyServiceProvider extends ServiceProvider
     private function registerSessionHandler(): void
     {
         $this->app->make(SessionManager::class)->extend('database', function (Application $app): DatabaseSessionManager {
-            $connection = $app->make(ConnectionResolverInterface::class)->connection(config('session.connection'));
+            $connectionName = config('session.connection');
+            $connectionName = is_string($connectionName) ? $connectionName : null;
+            $connection = $app->make(ConnectionResolverInterface::class)->connection($connectionName);
+
             $table = config('session.table', 'sessions');
+            $table = is_string($table) ? $table : 'sessions';
+
             $minutes = config('session.lifetime');
+            $minutes = is_numeric($minutes) ? (int) $minutes : 120;
 
             return new DatabaseSessionManager(
                 $connection, $table, $minutes, $app
