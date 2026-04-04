@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Database\Eloquent\Model;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 use Revoltify\Tenantify\Tenantify;
 
@@ -17,11 +18,14 @@ if (! function_exists('tenant')) {
             return null;
         }
 
+        /** @var TenantInterface&Model $tenant */
+        $tenant = app(TenantInterface::class);
+
         if (is_null($key)) {
-            return app(TenantInterface::class);
+            return $tenant;
         }
 
-        return app(TenantInterface::class)?->getAttribute($key);
+        return $tenant->getAttribute($key);
     }
 }
 
@@ -70,7 +74,7 @@ if (! function_exists('clear_tenantify_cache')) {
             }
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }

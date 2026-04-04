@@ -27,7 +27,7 @@ it('will not fail when no tenant is present and mailables are tenant aware by de
 
     $this->tenant->notify((new NotificationNotTenantAware));
 
-    $this->expectExceptionMessage("Call to undefined method Illuminate\Notifications\Channels\MailChannel::assertCount()");
+    $this->expectExceptionMessage("Method Illuminate\Notifications\ChannelManager::assertCount does not exist.");
 
     Notification::assertCount(1);
 });
@@ -39,7 +39,7 @@ it('will inject the current tenant id', function () {
 
     $this->tenant->notify((new NotificationTenantAware)->delay(now()->addSecond()));
 
-    $this->expectExceptionMessage("Call to undefined method Illuminate\Notifications\Channels\MailChannel::assertNothingSent()");
+    $this->expectExceptionMessage("Method Illuminate\Notifications\ChannelManager::assertNothingSent does not exist.");
 
     Notification::assertNothingSent();
 });

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Broadcasting\PendingBroadcast;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 use Revoltify\Tenantify\Exceptions\TenantNotFoundInTenantAwareJobException;
@@ -40,5 +41,5 @@ it('will inject the current tenant id', function () {
 
     expect(
         Broadcast::event(new BroadcastTenantAware('Hello world!'))
-    )->toBeInstanceOf(\Illuminate\Broadcasting\PendingBroadcast::class);
+    )->toBeInstanceOf(PendingBroadcast::class);
 });

@@ -24,6 +24,7 @@ trait ImplementsDomain
             return null;
         }
 
+        /** @var static */
         return app(DomainInterface::class);
     }
 

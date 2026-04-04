@@ -1,5 +1,16 @@
 <?php
 
+use Illuminate\Broadcasting\BroadcastEvent;
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Mail\SendQueuedMailable;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Queue\CallQueuedClosure;
+use Revoltify\Tenantify\Bootstrappers\CacheBootstrapper;
+use Revoltify\Tenantify\Bootstrappers\SessionBootstrapper;
+use Revoltify\Tenantify\Models\Domain;
+use Revoltify\Tenantify\Models\Tenant;
+use Revoltify\Tenantify\Resolvers\DomainResolver;
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -7,8 +18,8 @@ return [
     |--------------------------------------------------------------------------
     */
     'models' => [
-        'tenant' => \Revoltify\Tenantify\Models\Tenant::class,
-        'domain' => \Revoltify\Tenantify\Models\Domain::class,
+        'tenant' => Tenant::class,
+        'domain' => Domain::class,
     ],
 
     /*
@@ -55,8 +66,8 @@ return [
     | BootstrapperInterface.
     */
     'bootstrappers' => [
-        \Revoltify\Tenantify\Bootstrappers\CacheBootstrapper::class,
-        \Revoltify\Tenantify\Bootstrappers\SessionBootstrapper::class,
+        CacheBootstrapper::class,
+        SessionBootstrapper::class,
         // \Revoltify\Tenantify\Bootstrappers\SpatiePermissionsBootstrapper::class,
     ],
 
@@ -71,7 +82,7 @@ return [
     */
     'resolver' => [
         // The resolver class to use for tenant resolution
-        'class' => \Revoltify\Tenantify\Resolvers\DomainResolver::class,
+        'class' => DomainResolver::class,
 
         // Cache configuration for the resolver
         'cache' => [
@@ -89,11 +100,11 @@ return [
         'tenant_aware_by_default' => false,
 
         'queueable_to_job' => [
-            \Illuminate\Mail\SendQueuedMailable::class => 'mailable',
-            \Illuminate\Notifications\SendQueuedNotifications::class => 'notification',
-            \Illuminate\Queue\CallQueuedClosure::class => 'closure',
-            \Illuminate\Events\CallQueuedListener::class => 'class',
-            \Illuminate\Broadcasting\BroadcastEvent::class => 'event',
+            SendQueuedMailable::class => 'mailable',
+            SendQueuedNotifications::class => 'notification',
+            CallQueuedClosure::class => 'closure',
+            CallQueuedListener::class => 'class',
+            BroadcastEvent::class => 'event',
         ],
 
         'tenant_aware_jobs' => [

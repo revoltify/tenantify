@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Managers;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Session\DatabaseSessionHandler;
 use Revoltify\Tenantify\Models\Contracts\TenantInterface;
 
@@ -12,7 +13,7 @@ class DatabaseSessionManager extends DatabaseSessionHandler
     /**
      * Get a fresh query builder instance for the table with tenant scope.
      *
-     * @return \Illuminate\Database\Query\Builder
+     * @return Builder
      */
     protected function getQuery()
     {

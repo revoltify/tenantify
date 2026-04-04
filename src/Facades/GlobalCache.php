@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Revoltify\Tenantify\Facades;
 
+use Illuminate\Cache\CacheManager;
+use Illuminate\Cache\Repository;
 use Illuminate\Support\Facades\Facade;
 
 /**
@@ -60,8 +62,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Illuminate\Contracts\Cache\Lock lock(string $name, int $seconds = 0, string|null $owner = null)
  * @method static \Illuminate\Contracts\Cache\Lock restoreLock(string $name, string $owner)
  *
- * @see \Illuminate\Cache\CacheManager
- * @see \Illuminate\Cache\Repository
+ * @see CacheManager
+ * @see Repository
  */
 class GlobalCache extends Facade
 {
