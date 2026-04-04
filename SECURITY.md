@@ -8,4 +8,4 @@
 
 ## Reporting a Vulnerability
 
-If you see a vulnerability, please open an issue or report it directly to me ([EMAIL_ADDRESS])
+If you see a vulnerability, please open an issue or report it directly to me (rtraselbd@gmail.com) 
